@@ -1,4 +1,6 @@
 console.log("Hello");
+console.log("This is for test");
+
 const express = require("express");
 const mongoose = require("mongoose");
 const router = require("./Route/userRoute");
