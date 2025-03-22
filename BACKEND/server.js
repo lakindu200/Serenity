@@ -1,32 +1,20 @@
-import express from 'express';
-import mongoose from 'mongoose';
-import bodyParser from 'body-parser';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import customProductRoutes from './routes/Custom_product.js';
+console.log("Hello");
+console.log("This is for test");
 
-dotenv.config();
-
+const express = require("express");
+const mongoose = require("mongoose");
+const router = require("./Route/userRoute");
 const app = express();
-const PORT = process.env.PORT || 8000;
 
-app.use(cors());
-app.use(bodyParser.json());
+//Middleware
 
-const URL = process.env.MONGODB_URL;
+app.use(express.json());
+app.use("/users",router);
 
-mongoose.connect(URL, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
 
-const connection = mongoose.connection;
-connection.once('open', () => {
-  console.log("!!!!MongoDB connection established successfully!");
-});
-
-app.use('/custom_product', customProductRoutes);
-
-app.listen(PORT, () => {
-  console.log(`Server is running on port: ${PORT}`);
-});
+mongoose.connect("mongodb+srv://lakinduch:Lakindu200@serenity.jq1tw.mongodb.net/product_db?retryWrites=true&w=majority'/")
+.then(()=> console.log("connected to MongoDB"))
+.then(() => {
+    app.listen(5002);
+})
+.catch((err) => console.log((err)));
