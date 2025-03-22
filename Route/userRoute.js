@@ -8,7 +8,7 @@ const usercontroller = require("../Controles/usercontrol");
 router.get("/",usercontroller.getAllUsers);
 router.post("/",usercontroller.addUsers);
 router.get("/:id",usercontroller.getById);
-router.put("/:id",usercontroller.updateUser);
+router.put("/:id",usercontroller.updateUser); 
 router.delete("/:id",usercontroller.deleteUser);
 
 //export

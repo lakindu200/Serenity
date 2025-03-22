@@ -5,10 +5,12 @@ const express = require("express");
 const mongoose = require("mongoose");
 const router = require("./Route/userRoute");
 const app = express();
+const cors = require("cors");
 
 //Middleware
 
 app.use(express.json());
+app.use(cors());
 app.use("/users",router);
 
 
