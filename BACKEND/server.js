@@ -3,7 +3,8 @@ import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import customProductRoutes from './routes/Custom_product.js';
+import customProductRoutes from './routes/Custom_product_route.js'; 
+import clientDetailsRoutes from './routes/Client_details_route.js';
 
 dotenv.config();
 
@@ -26,7 +27,13 @@ connection.once('open', () => {
 });
 
 app.use('/custom_product', customProductRoutes);
-
+app.use('/client_details', clientDetailsRoutes);
 app.listen(PORT, () => {
   console.log(`Server is running on port: ${PORT}`);
 });
+
+
+
+
+
+
