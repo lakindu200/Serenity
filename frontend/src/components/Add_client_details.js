@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './Add_client_details.css';
+
 
 function AddClientDetail() {
     const navigate = useNavigate();
@@ -75,7 +77,7 @@ function AddClientDetail() {
 
     return (
         <div className="container mt-5">
-            <h2>Add Client Details</h2>
+            <div className="client_add">Add Client Details</div>
             <form onSubmit={handleSubmit}>
                 <div className="form-group mb-3">
                     <label htmlFor="name">Name</label>

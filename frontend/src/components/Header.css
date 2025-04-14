@@ -1,0 +1,120 @@
+.header {
+    background-color: #2D168C;
+    padding: 1.5rem 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.header .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 3rem;
+    font-weight: 600;
+    color: #F4B000;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    margin-left: 0;
+}
+
+.header nav {
+    display: flex;
+    align-items: center;
+}
+
+
+
+.header .nav-item {
+    margin-left: 1rem;
+}
+
+.header .nav-link {
+    color: white;
+    padding: 0.5rem 1rem;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.header .nav-link:hover {
+    background-color: rgba(244, 176, 0, 0.1);
+    border-color: #F4B000;
+    color: #F4B000;
+}
+
+.header .nav-link.active {
+    background-color: #2D168C;
+    color: white;
+    border-color: #F4B000;
+}
+
+/* Cart Button Styles */
+.crt_button {
+    text-decoration: none;
+    color: white;
+    font-weight: 600;
+    padding: 0.8rem 1.5rem;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+    background-color: #2D168C;
+    letter-spacing: 5px;
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+}
+
+.crt_button:hover {
+    background-color: #F4B000;
+    color: #2D168C;
+    transform: translateY(-2px);
+    text-decoration: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.crt_button:active {
+    transform: translateY(0);
+    background-color: #00A99D;
+    border-color: #00A99D;
+    color: white;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .header h1 {
+        font-size: 2rem;
+    }
+
+    .header .nav-item {
+        margin-left: 0.5rem;
+    }
+
+    .header .nav-link {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    .crt_button {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+    }
+
+    .logo {
+        height: 60px;
+    }
+}
+
+.logo {
+    height: 70px;
+    width: auto;
+    margin-right: 2rem;
+    
+    
+}
+
+
+

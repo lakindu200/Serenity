@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import'./Add_custom_product.css';
 
 function AddCustomProduct() {
   const navigate = useNavigate();
@@ -48,12 +49,12 @@ function AddCustomProduct() {
   return (
     <div className="container mt-5">
 
-      <h2>Add Custom Product</h2>
+      <div className="container1">Add Custom Product</div>
 
       <form onSubmit={handleSubmit}>
-        <div className="card mb-4">
+        <div className="card mb">
           <div className="card-header bg-light">
-            <h4 className="mb-0">Fabric Measurements</h4>
+            <h4>Fabric Measurements</h4>
           </div>
 
           <div className="card-body">
@@ -150,7 +151,7 @@ function AddCustomProduct() {
         {/* Pillow Section */}
         <div className="card">
           <div className="card-header bg-light">
-            <h4 className="mb-0">Pillows</h4>
+            <h4 className="mb">Pillows</h4>
           </div>
 
           <div className="card-body">
@@ -174,7 +175,7 @@ function AddCustomProduct() {
               </small>
             </div>
 
-            <div className="form-group mt-3">
+            <div className="form-group">
               <label htmlFor="pillowSize">Pillow Size</label>
               <select
                 className="form-control"
@@ -193,7 +194,7 @@ function AddCustomProduct() {
               </small>
             </div>
 
-            <div className="form-group mt-3">
+            <div className="form-group">
               <label htmlFor="pillowColor">Pillow Color</label>
               <input
                 type="text"
@@ -210,7 +211,7 @@ function AddCustomProduct() {
             </div>
             
 
-            <div className="form-group mt-3">
+            <div className="form-group">
               <label htmlFor="pillowQuantity">Quantity</label>
               <input
                 type="number"
@@ -229,7 +230,7 @@ function AddCustomProduct() {
           </div>
         </div>
 
-        <button type="submit" className="btn btn-primary mt-4 w-100">Proceed</button>
+        <button type="submit" className="btn btn-primary mt-4 ">Proceed</button>
       </form>
     </div>
   );

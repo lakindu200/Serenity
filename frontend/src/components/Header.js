@@ -1,23 +1,34 @@
-import react from 'react';
+import React from 'react'
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './Header.css'
+import logo from '../assets/SERENITY.png'; // Update path based on your logo location
 
 function Header() {
     return (
-        <header className="bg-dark text-light py-4 mb-4">
-      <div className="container">
-        <div className="d-flex justify-content-between align-items-center" >  
-          <h1 className="h3"  >SERENITY FORM </h1>
-          <nav>
-            <ul className = "nav nav-tabs ">
-              <li className="nav-item">
-                <a className="nav-link active align-item-" href="#home">Cart</a>
-              </li>
-            </ul> 
-           
-          </nav>
-        </div>
-      </div>
-    </header> 
+        <header className="header">
+            <div className="container">
+                <div className="d-flex justify-content-between align-items-center">  
+                    <div className="d-flex align-items-center">
+                        <img 
+                            src={logo} 
+                            alt="Serenity Logo" 
+                            className="logo" 
+                        />
+                        <h1>SERENITY</h1>
+                    </div>
+                    <nav>
+                        <ul className="nav">
+                            <li className="nav-item">
+                                <a className="crt_button" href="#home">
+                                    CART
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </header> 
     );
-    }
+}
 
 export default Header;

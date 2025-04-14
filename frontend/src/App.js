@@ -21,11 +21,11 @@ function App() {
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
           <div className="container-fluid">
             <div className="navbar-nav mx-auto"> 
-              <div className="d-flex gap-4"> 
-                <Link to="/" className="btn btn-outline-primary">PRODUCTS</Link>
-                <Link to="/customize" className="btn btn-outline-primary">CUSTOMIZE</Link>
-                <Link to="/orders" className="btn btn-outline-primary">ORDERS</Link>
-                <Link to="/client" className="btn btn-outline-primary">CLIENTS</Link>
+              <div className="buttons"> 
+                <Link to="/" className="button">PRODUCTS</Link>
+                <Link to="/customize" className="button">CUSTOMIZE</Link>
+                <Link to="/orders" className="button">ORDERS</Link>
+                <Link to="/client" className="button">CLIENTS</Link>
               </div>
             </div>
           </div>
