@@ -8,7 +8,6 @@ import {
     activateProduct,
     getFilteredAndSortedProducts,
 } from "../controllers/productController.js";
-// import { getFilteredAndSortedProducts } from "../controllers/productController.js";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
