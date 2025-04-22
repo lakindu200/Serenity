@@ -78,7 +78,7 @@ function AddClientDetail() {
     return (
         <div className="container mt-5">
             <div className="client_add">Add Client Details</div>
-            <form onSubmit={handleSubmit}>
+            <form className="fromInputs" onSubmit={handleSubmit}>
                 <div className="form-group mb-3">
                     <label htmlFor="name">Name</label>
                     <input 

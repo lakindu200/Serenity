@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import './Add_price.css';
 function AddPrice() {
     const navigate = useNavigate();
     const [materialPrice, setMaterialPrice] = useState(0);
     const [pillowTypePrice, setPillowTypePrice] = useState(0);
     const [pillowSizePrice, setPillowSizePrice] = useState(0);
     const [orderData, setOrderData] = useState(null);
+    
 
     useEffect(() => {
         const savedPrices = JSON.parse(localStorage.getItem('priceData')) || {};

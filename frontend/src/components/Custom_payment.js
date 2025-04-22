@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import './Custom_payment.css';
+
 
 function CustomPayment() {
     const navigate = useNavigate();
@@ -11,6 +12,7 @@ function CustomPayment() {
     const [error, setError] = useState(null);
     const [paymentAmount, setPaymentAmount] = useState('');
     const [balance, setBalance] = useState(0);
+    const [paymentError, setPaymentError] = useState('');
 
     useEffect(() => {
         // Get stored data
@@ -38,12 +40,31 @@ function CustomPayment() {
     const handlePaymentChange = (e) => {
         const amount = e.target.value;
         setPaymentAmount(amount);
-        setBalance(calculateBalance(amount));
+        const newBalance = calculateBalance(amount);
+        setBalance(newBalance);
+        
+        // Validate payment amount
+        const paid = parseFloat(amount) || 0;
+        const total = priceData?.subTotal || 0;
+        
+        if (paid < total) {
+            setPaymentError('Payment amount must be at least equal to the total amount');
+        } else {
+            setPaymentError('');
+        }
     };
 
     const handleSubmitOrder = async () => {
         if (!paymentAmount) {
             setError('Please enter payment amount');
+            return;
+        }
+
+        const paid = parseFloat(paymentAmount) || 0;
+        const total = priceData?.subTotal || 0;
+        
+        if (paid < total) {
+            setError('Payment amount must be at least equal to the total amount');
             return;
         }
 
@@ -108,86 +129,101 @@ function CustomPayment() {
 
     return (
         <div className="container mt-5">
-            <div className="card">
+            <div className="card mb-4">
                 <div className="card-header bg-primary text-white">
-                    <h3 className="mb-0">Order Summary</h3>
+                    <h3 className="mb-0">Order Calculation</h3>
                 </div>
                 <div className="card-body">
-                    <div className="row">
-                        <div className="col-md-6">
-                            <h5 className="mb-3">Fabric Cost Breakdown</h5>
-                            <ul className="list-unstyled">
-                                <li><strong>Material Type:</strong> {orderData?.material}</li>
-                                <li><strong>Dimensions:</strong> {orderData?.length}m × {orderData?.width}m</li>
-                                <li><strong>Price per 10cm×10cm:</strong> Rs. {priceData?.materialPrice}</li>
-                                <li><strong>Total Area Cost:</strong> Rs. {priceData?.materialTotal?.toFixed(2)}</li>
-                            </ul>
-                        </div>
-                        <div className="col-md-6">
-                            <h5 className="mb-3">Pillow Cost Breakdown</h5>
-                            <ul className="list-unstyled">
-                                <li><strong>Pillow Type:</strong> {orderData?.pillow_type}</li>
-                                <li><strong>Size:</strong> {orderData?.pillow_size}</li>
-                                <li><strong>Quantity:</strong> {orderData?.pillow_quantity}</li>
-                                <li><strong>Base Price:</strong> Rs. {priceData?.pillowTypePrice}</li>
-                                <li><strong>Size Price:</strong> Rs. {priceData?.pillowSizePrice}</li>
-                                <li><strong>Total Pillow Cost:</strong> Rs. {priceData?.pillowTotal?.toFixed(2)}</li>
-                            </ul>
-                        </div>
+                    {/* Fabric Cost Section */}
+                    <div className="mb-4">
+                        <h5 className="mb-3">Fabric Cost Breakdown</h5>
+                        <ul className="list-unstyled">
+                            <li><strong>Material Type:</strong> {orderData?.material}</li>
+                            <li><strong>Dimensions:</strong> {orderData?.length}m × {orderData?.width}m</li>
+                            <li><strong>Price per 10cm×10cm:</strong> Rs. {priceData?.materialPrice}</li>
+                            <li><strong>Total Area Cost:</strong> Rs. {priceData?.materialTotal?.toFixed(2)}</li>
+                        </ul>
                     </div>
-                    <hr />
-                    <div className="row">
-                        <div className="col-12">
-                            <h4 className="text-end">
-                                Sub Total: Rs. {priceData?.subTotal?.toFixed(2)}
-                            </h4>
-                        </div>
+                    
+                    {/* Pillow Cost Section */}
+                    <div className="mb-4">
+                        <h5 className="mb-3">Pillow Cost Breakdown</h5>
+                        <ul className="list-unstyled">
+                            <li><strong>Pillow Type:</strong> {orderData?.pillow_type}</li>
+                            <li><strong>Size:</strong> {orderData?.pillow_size}</li>
+                            <li><strong>Quantity:</strong> {orderData?.pillow_quantity}</li>
+                            <li><strong>Base Price:</strong> Rs. {priceData?.pillowTypePrice}</li>
+                            <li><strong>Size Price:</strong> Rs. {priceData?.pillowSizePrice}</li>
+                            <li><strong>Total Pillow Cost:</strong> Rs. {priceData?.pillowTotal?.toFixed(2)}</li>
+                        </ul>
                     </div>
-                    <hr />
-                    <div className="row mt-4">
-                        <div className="col-md-6">
-                            <h5 className="mb-3">Payment Details</h5>
-                            <div className="form-group mb-3">
-                                <label htmlFor="paymentAmount" className="form-label">
-                                    Enter Payment Amount (Rs.)
-                                </label>
-                                <input
-                                    type="number"
-                                    className="form-control"
-                                    id="paymentAmount"
-                                    value={paymentAmount}
-                                    onChange={handlePaymentChange}
-                                    placeholder="Enter amount"
-                                    min="0"
-                                    step="0.01"
-                                />
-                            </div>
-                        </div>
-                        <div className="col-md-6">
-                            <div className="card bg-light">
-                                <div className="card-body">
-                                    <h5 className="card-title">Payment Summary</h5>
-                                    <div className="d-flex justify-content-between mb-2">
-                                        <span>Total Amount:</span>
-                                        <strong>Rs. {priceData?.subTotal?.toFixed(2)}</strong>
-                                    </div>
-                                    <div className="d-flex justify-content-between mb-2">
-                                        <span>Payment Amount:</span>
-                                        <strong>Rs. {parseFloat(paymentAmount || 0).toFixed(2)}</strong>
-                                    </div>
-                                    <div className="d-flex justify-content-between">
-                                        <span>Balance:</span>
-                                        <strong className={balance < 0 ? 'text-success' : 'text-danger'}>
-                                            Rs. {Math.abs(balance).toFixed(2)}
-                                            {balance < 0 ? ' (Change)' : ''}
-                                        </strong>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+
+                    <div className="text-end border-top pt-3">
+                        <h4>Sub Total: Rs. {priceData?.subTotal?.toFixed(2)}</h4>
                     </div>
                 </div>
-                <div className="card-footer">
+            </div>
+
+            {/* Payment Input Section */}
+            <div className="card mb-4">
+                <div className="card-header bg-primary text-white">
+                    <h3 className="mb-0">Payment Details</h3>
+                </div>
+                <div className="card-body">
+                    <div className="form-group">
+                        <label htmlFor="paymentAmount" className="form-label">
+                            Enter Payment Amount (Rs.)
+                        </label>
+                        <input
+                            type="number"
+                            className={`form-control ${paymentError ? 'is-invalid' : ''}`}
+                            id="paymentAmount"
+                            value={paymentAmount}
+                            onChange={handlePaymentChange}
+                            placeholder="Enter amount"
+                            min="0"
+                            step="0.01"
+                            required
+                        />
+                        {paymentError && (
+                            <div className="invalid-feedback">
+                                {paymentError}
+                            </div>
+                        )}
+                        <small className="text-muted">
+                            Minimum payment amount: Rs. {priceData?.subTotal?.toFixed(2)}
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            {/* Payment Summary Section */}
+            <div className="card mb-4">
+                <div className="card-header bg-primary text-white">
+                    <h3 className="mb-0">Payment Summary</h3>
+                </div>
+                <div className="card-body">
+                    <div className="summary-item d-flex justify-content-between mb-3">
+                        <span>Total Amount:</span>
+                        <strong>Rs. {priceData?.subTotal?.toFixed(2)}</strong>
+                    </div>
+                    <div className="summary-item d-flex justify-content-between mb-3">
+                        <span>Payment Amount:</span>
+                        <strong>Rs. {parseFloat(paymentAmount || 0).toFixed(2)}</strong>
+                    </div>
+                    <div className="summary-item d-flex justify-content-between">
+                        <span>Balance:</span>
+                        <strong className={balance < 0 ? 'text-success' : 'text-danger'}>
+                            Rs. {Math.abs(balance).toFixed(2)}
+                            {balance < 0 ? ' (Change)' : ''}
+                        </strong>
+                    </div>
+                </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="card">
+                <div className="card-body">
                     <div className="d-flex justify-content-between">
                         <button 
                             className="btn btn-secondary"
