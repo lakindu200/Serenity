@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Link } from 'react-router-dom';
+import './Client_order.css';  // Add this import
 
 function ClientOrder() {
     const [clients, setClients] = useState([]);
