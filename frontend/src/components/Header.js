@@ -17,13 +17,9 @@ function Header() {
                         <h1>SERENITY</h1>
                     </div>
                     <nav>
-                        <ul className="nav">
-                            <li className="nav-item">
-                                <a className="crt_button" href="#home">
-                                    CART
-                                </a>
-                            </li>
-                        </ul>
+                        
+                            
+                    
                     </nav>
                 </div>
             </div>

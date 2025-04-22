@@ -22,7 +22,7 @@ function App() {
           <div className="container-fluid">
             <div className="navbar-nav mx-auto"> 
               <div className="buttons"> 
-                <Link to="/" className="button">PRODUCTS</Link>
+                <Link to="/" className="button">HOME</Link>
                 <Link to="/customize" className="button">CUSTOMIZE</Link>
                 <Link to="/orders" className="button">ORDERS</Link>
                 <Link to="/client" className="button">CLIENTS</Link>

@@ -9,6 +9,8 @@ function CustomPayment() {
     const [clientData, setClientData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [paymentAmount, setPaymentAmount] = useState('');
+    const [balance, setBalance] = useState(0);
 
     useEffect(() => {
         // Get stored data
@@ -27,16 +29,34 @@ function CustomPayment() {
         setClientData(clientInfo);
     }, [navigate]);
 
+    const calculateBalance = (amount) => {
+        const paid = parseFloat(amount) || 0;
+        const total = priceData?.subTotal || 0;
+        return total - paid;
+    };
+
+    const handlePaymentChange = (e) => {
+        const amount = e.target.value;
+        setPaymentAmount(amount);
+        setBalance(calculateBalance(amount));
+    };
+
     const handleSubmitOrder = async () => {
+        if (!paymentAmount) {
+            setError('Please enter payment amount');
+            return;
+        }
+
         setLoading(true);
         try {
             const productPayload = {
                 ...orderData,
                 orderDate: new Date(),
-                subtotal: priceData.subTotal
+                subtotal: priceData.subTotal,
+                paymentAmount: parseFloat(paymentAmount),
+                balance: balance
             };
 
-            
             const productResponse = await fetch('http://localhost:8000/custom_product/add', {
                 method: 'POST',
                 headers: {
@@ -123,6 +143,49 @@ function CustomPayment() {
                             </h4>
                         </div>
                     </div>
+                    <hr />
+                    <div className="row mt-4">
+                        <div className="col-md-6">
+                            <h5 className="mb-3">Payment Details</h5>
+                            <div className="form-group mb-3">
+                                <label htmlFor="paymentAmount" className="form-label">
+                                    Enter Payment Amount (Rs.)
+                                </label>
+                                <input
+                                    type="number"
+                                    className="form-control"
+                                    id="paymentAmount"
+                                    value={paymentAmount}
+                                    onChange={handlePaymentChange}
+                                    placeholder="Enter amount"
+                                    min="0"
+                                    step="0.01"
+                                />
+                            </div>
+                        </div>
+                        <div className="col-md-6">
+                            <div className="card bg-light">
+                                <div className="card-body">
+                                    <h5 className="card-title">Payment Summary</h5>
+                                    <div className="d-flex justify-content-between mb-2">
+                                        <span>Total Amount:</span>
+                                        <strong>Rs. {priceData?.subTotal?.toFixed(2)}</strong>
+                                    </div>
+                                    <div className="d-flex justify-content-between mb-2">
+                                        <span>Payment Amount:</span>
+                                        <strong>Rs. {parseFloat(paymentAmount || 0).toFixed(2)}</strong>
+                                    </div>
+                                    <div className="d-flex justify-content-between">
+                                        <span>Balance:</span>
+                                        <strong className={balance < 0 ? 'text-success' : 'text-danger'}>
+                                            Rs. {Math.abs(balance).toFixed(2)}
+                                            {balance < 0 ? ' (Change)' : ''}
+                                        </strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div className="card-footer">
                     <div className="d-flex justify-content-between">
@@ -137,7 +200,7 @@ function CustomPayment() {
                         <button 
                             className="btn btn-primary"
                             onClick={handleSubmitOrder}
-                            disabled={loading}
+                            disabled={loading || !paymentAmount}
                         >
                             {loading ? (
                                 <>

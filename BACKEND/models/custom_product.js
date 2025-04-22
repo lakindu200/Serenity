@@ -11,7 +11,9 @@ const productSchema = new Schema({
     pillow_color: { type: String, required: true },
     pillow_quantity: { type: Number, required: true },
     orderDate: { type: Date, default: Date.now }, 
-    subtotal: { type: Number, required: true }
+    subtotal: { type: Number, required: true },
+    paymentAmount: { type: Number, required: true },
+    balance: { type: Number, required: true }
 });
 
 const Product = mongoose.model('Product', productSchema);

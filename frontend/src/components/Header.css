@@ -54,34 +54,7 @@
 }
 
 /* Cart Button Styles */
-.crt_button {
-    text-decoration: none;
-    color: white;
-    font-weight: 600;
-    padding: 0.8rem 1.5rem;
-    border-radius: 20px;
-    transition: all 0.3s ease;
-    background-color: #2D168C;
-    letter-spacing: 5px;
-    position: relative;
-    overflow: hidden;
-    display: inline-block;
-}
 
-.crt_button:hover {
-    background-color: #F4B000;
-    color: #2D168C;
-    transform: translateY(-2px);
-    text-decoration: none;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.crt_button:active {
-    transform: translateY(0);
-    background-color: #00A99D;
-    border-color: #00A99D;
-    color: white;
-}
 
 /* Responsive styles */
 @media (max-width: 768px) {
