@@ -3,7 +3,7 @@ import Product from '../models/custom_product.js';
 
 const router = express.Router();
 
-// Fix the add route
+// Add new product
 router.route('/add').post(async (req, res) => {
     try {
         const {
@@ -15,17 +15,19 @@ router.route('/add').post(async (req, res) => {
             pillow_size,
             pillow_color,
             pillow_quantity,
-            subtotal, 
-            orderDate = new Date() 
+            subtotal,
+            paymentAmount,
+            balance,
+            orderDate = new Date()
         } = req.body;
 
-        // Validate 
+        // Validate required fields
         if (!length || !width || !color || !material || 
-            !pillow_type || !pillow_size || !pillow_color || !pillow_quantity || !subtotal) 
-        {
+            !pillow_type || !pillow_size || !pillow_color || 
+            !pillow_quantity || !subtotal || !paymentAmount || balance === undefined) {
             return res.status(400).json({
                 status: "Error",
-                message: "All fields are required including subtotal"
+                message: "All fields are required including payment details"
             });
         }
 
@@ -38,7 +40,9 @@ router.route('/add').post(async (req, res) => {
             pillow_size,
             pillow_color,
             pillow_quantity: Number(pillow_quantity),
-            subtotal: Number(subtotal), 
+            subtotal: Number(subtotal),
+            paymentAmount: Number(paymentAmount),
+            balance: Number(balance),
             orderDate: new Date(orderDate)
         });
 
@@ -51,76 +55,135 @@ router.route('/add').post(async (req, res) => {
     } catch (err) {
         console.error('Error:', err);
         res.status(400).json({
-            status: "Error", 
+            status: "Error",
             message: "Failed to add product",
             error: err.message
         });
     }
 });
 
-
-router.route('/').get((req, res) => {
-    Product.find()
-        .then(products => {
-            res.status(200).json({
-                status: "Success",
-                products: products
-            });
-        })
-        .catch(err => {
-            console.error('Error fetching products:', err);
-            res.status(400).json({
-                status: "Error",
-                message: "Failed to fetch products",
-                error: err.message
-            });
+// Get all products
+router.route('/').get(async (req, res) => {
+    try {
+        const products = await Product.find();
+        res.status(200).json({
+            status: "Success",
+            products: products
         });
+    } catch (err) {
+        console.error('Error fetching products:', err);
+        res.status(400).json({
+            status: "Error",
+            message: "Failed to fetch products",
+            error: err.message
+        });
+    }
 });
 
+// Update product
 router.route('/update/:id').put(async (req, res) => {
-    let Id = req.params.id;
-    const { length, width, color, material,pillow_type, pillow_size,pillow_color,pillow_quantity,subtotal } = req.body;
-
-    const updateProduct = {
-        length,
-        width,
-        color,
-        material,
-        pillow_type,
-        pillow_size,
-        pillow_color,
-        pillow_quantity,
-        subtotal
-    };
-
     try {
-        await Product.findByIdAndUpdate(Id, updateProduct);
-        res.status(200).send({ status: "Product updated" });
+        const {
+            length,
+            width,
+            color,
+            material,
+            pillow_type,
+            pillow_size,
+            pillow_color,
+            pillow_quantity,
+            subtotal
+        } = req.body;
+
+        const updateProduct = {
+            length: Number(length),
+            width: Number(width),
+            color,
+            material,
+            pillow_type,
+            pillow_size,
+            pillow_color,
+            pillow_quantity: Number(pillow_quantity),
+            subtotal: Number(subtotal)
+        };
+
+        const updatedProduct = await Product.findByIdAndUpdate(
+            req.params.id, 
+            updateProduct,
+            { new: true }
+        );
+
+        if (!updatedProduct) {
+            return res.status(404).json({
+                status: "Error",
+                message: "Product not found"
+            });
+        }
+
+        res.status(200).json({
+            status: "Success",
+            message: "Product updated successfully",
+            product: updatedProduct
+        });
     } catch (err) {
-        console.error(err);
-        res.status(400).send({ status: "Product not updated", error: err.message });
+        console.error('Error:', err);
+        res.status(400).json({
+            status: "Error",
+            message: "Failed to update product",
+            error: err.message
+        });
     }
 });
 
+// Delete product
 router.route('/delete/:id').delete(async (req, res) => {
-    let Id = req.params.id;
     try {
-        await Product.findByIdAndDelete(Id);
-        res.status(200).send({ status: "Product deleted" });
+        const deletedProduct = await Product.findByIdAndDelete(req.params.id);
+        
+        if (!deletedProduct) {
+            return res.status(404).json({
+                status: "Error",
+                message: "Product not found"
+            });
+        }
+
+        res.status(200).json({
+            status: "Success",
+            message: "Product deleted successfully"
+        });
     } catch (err) {
-        console.error(err.message);
-        res.status(400).send({ status: "Product not deleted", error: err.message });
+        console.error('Error:', err);
+        res.status(400).json({
+            status: "Error",
+            message: "Failed to delete product",
+            error: err.message
+        });
     }
 });
 
+// Get product by ID
 router.route('/get/:id').get(async (req, res) => {
-    let Id = req.params.id;
     try {
-        const product = await Product.findById(Id);
-        res.status(200).send({ status: "Product fetched", product: product });
+        const product = await Product.findById(req.params.id);
+        
+        if (!product) {
+            return res.status(404).json({
+                status: "Error",
+                message: "Product not found"
+            });
+        }
+
+        res.status(200).json({
+            status: "Success",
+            product: product
+        });
     } catch (err) {
-        console.error(err.message);
-        res.status(400).send({ status: "Product not fetched", error: err.message });
+        console.error('Error:', err);
+        res.status(400).json({
+            status: "Error",
+            message: "Failed to fetch product",
+            error: err.message
+        });
     }
 });
 
