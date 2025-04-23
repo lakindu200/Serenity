@@ -3,7 +3,8 @@ import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import customProductRoutes from './routes/Custom_product.js';
+import cartroutes from './routes/cartroutes.js';
+import paymentroutes from './routes/paymentroutes.js'; 
 
 dotenv.config();
 
@@ -25,7 +26,8 @@ connection.once('open', () => {
   console.log("!!!!MongoDB connection established successfully!");
 });
 
-app.use('/custom_product', customProductRoutes);
+app.use('/api/cart', cartroutes);
+app.use('/api/payment', paymentroutes); // Use the payment routes
 
 app.listen(PORT, () => {
   console.log(`Server is running on port: ${PORT}`);
