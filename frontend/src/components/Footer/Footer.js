@@ -1,6 +1,13 @@
 import { assets } from "../../assets/assets";
 import "./Footer.css";
-import { FaFacebookF, FaInstagram, FaLinkedinIn, FaTwitter, FaYoutube, FaEnvelope } from "react-icons/fa";
+import { 
+  FaFacebookF, 
+  FaInstagram, 
+  FaLinkedinIn, 
+  FaTwitter, 
+  FaYoutube, 
+  FaEnvelope 
+} from 'react-icons/fa';
 
 function Footer() {
     return (

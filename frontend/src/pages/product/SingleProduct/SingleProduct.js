@@ -15,6 +15,7 @@ function SingleProduct() {
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [quantity, setQuantity] = useState(1);
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -65,6 +66,46 @@ function SingleProduct() {
             }
         };
         fetchProduct();
+    };
+
+    const handleQuantityChange = (e) => {
+        const value = parseInt(e.target.value);
+        if (value > 0 && value <= product.stock_quantity) {
+            setQuantity(value);
+        } else if (value > product.stock_quantity) {
+            alert(`Maximum available quantity is ${product.stock_quantity}`);
+            setQuantity(product.stock_quantity);
+        }
+    };
+
+    const handleAddToCart = async () => {
+        try {
+            // Check if product is in stock
+            if (product.stock_quantity < 1) {
+                alert('Sorry, this product is out of stock');
+                return;
+            }
+
+            // Check if quantity is valid
+            if (quantity > product.stock_quantity) {
+                alert(`Sorry, only ${product.stock_quantity} items available`);
+                return;
+            }
+
+            const response = await axios.post('http://localhost:8020/cart/add', {
+                productName: product.name,
+                price: product.price,
+                quantity: quantity
+            });
+
+            if (response.status === 201) {
+                alert('Product added to cart successfully!');
+                navigate('/cartview');
+            }
+        } catch (error) {
+            console.error('Error adding to cart:', error);
+            alert('Failed to add product to cart. Please try again.');
+        }
     };
 
     if (loading) {
@@ -121,8 +162,21 @@ function SingleProduct() {
                                 {`${product.stock} - (${product.stock_quantity >= 1 && product.stock_quantity} available)`}
                             </p>
                             <div className="add-to-cart-section">
-                                <input type="number" defaultValue={1} min={1} className="quantity-input" />
-                                <button className="add-to-cart-btn">Add to cart</button>
+                                <input 
+                                    type="number" 
+                                    value={quantity}
+                                    onChange={handleQuantityChange}
+                                    min={1}
+                                    max={product.stock_quantity}
+                                    className="quantity-input" 
+                                />
+                                <button 
+                                    className="add-to-cart-btn"
+                                    onClick={handleAddToCart}
+                                    disabled={!product.stock_quantity}
+                                >
+                                    {product.stock_quantity ? 'Add to Cart' : 'Out of Stock'}
+                                </button>
                             </div>
                             <button onClick={() => navigate("/shop")} className="back-btn-1">
                                 Back to Shop
