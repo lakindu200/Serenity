@@ -1,32 +1,26 @@
-import express from 'express';
-import mongoose from 'mongoose';
-import bodyParser from 'body-parser';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import customProductRoutes from './routes/Custom_product.js';
-
-dotenv.config();
+import cors from "cors";
+import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
+import { connectDB } from "./config/db.js";
+import productRoutes from "./routes/productRoutes.js";
 
 const app = express();
-const PORT = process.env.PORT || 8000;
+const port = 4000;
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+app.use(express.json());
 app.use(cors());
-app.use(bodyParser.json());
 
-const URL = process.env.MONGODB_URL;
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/api/product", productRoutes);
 
-mongoose.connect(URL, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+connectDB();
+
+app.get("/", (req, res) => {
+    res.send("API Working");
 });
 
-const connection = mongoose.connection;
-connection.once('open', () => {
-  console.log("!!!!MongoDB connection established successfully!");
-});
-
-app.use('/custom_product', customProductRoutes);
-
-app.listen(PORT, () => {
-  console.log(`Server is running on port: ${PORT}`);
-});
+app.listen(port, () => console.log(`listening on localhost:${port}`));

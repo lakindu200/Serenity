@@ -1,0 +1,257 @@
+.single-product-container {
+    background-color: white;
+    padding: 30px 15px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.back-btn {
+    background-color: #1a2a44;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
+
+.back-btn-1 {
+    color: #1a2a44;
+    text-decoration: underline;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 80px;
+}
+
+.back-btn:hover {
+    background-color: #2a3a54;
+}
+
+.single-product {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.single-product-image {
+    width: 100%;
+    max-width: 500px;
+    height: auto;
+    border: 1px solid #ddd;
+}
+
+.single-product-details {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+}
+
+.single-product-details h2 {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.plu {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.price-main {
+    font-size: 48px;
+    color: #4490f3;
+    font-weight: 700;
+}
+
+.price {
+    color: #666;
+    font-weight: 500;
+}
+
+.mb-20 {
+    margin-top: 24px;
+    margin-bottom: 24px;
+}
+
+.product-info {
+    text-align: start;
+    list-style: none;
+    margin-bottom: 20px;
+}
+
+.product-info li {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 10px;
+    line-height: 1.5;
+    text-align: start;
+
+}
+
+.product-info li a {
+    color: #1a2a44;
+    text-decoration: underline;
+}
+
+.stock-status {
+    font-size: 14px;
+    color: #28a745;
+    margin-bottom: 20px;
+}
+
+.add-to-cart-section {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.quantity-input {
+    width: 60px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.add-to-cart-btn {
+    background-color: #f5c518;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 4px;
+}
+
+.add-to-cart-btn:hover {
+    background-color: #e0b416;
+}
+
+.skeleton-back-btn {
+    width: 150px;
+    height: 40px;
+    background-color: #e0e0e0;
+    margin-bottom: 20px;
+    animation: pulse 1.5s infinite;
+}
+
+.skeleton-image {
+    width: 100%;
+    max-width: 500px;
+    height: 300px;
+    background-color: #e0e0e0;
+    animation: pulse 1.5s infinite;
+}
+
+.skeleton-text {
+    background-color: #e0e0e0;
+    margin: 5px 0;
+    animation: pulse 1.5s infinite;
+}
+
+.skeleton-text.large {
+    width: 60%;
+    height: 30px;
+}
+
+.skeleton-text.short {
+    width: 30%;
+    height: 20px;
+}
+
+.skeleton-text.medium {
+    width: 40%;
+    height: 25px;
+}
+
+.skeleton-text.long {
+    width: 100%;
+    height: 20px;
+}
+
+.skeleton-info {
+    list-style: none;
+    margin-bottom: 20px;
+}
+
+.skeleton-add-to-cart {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.skeleton-quantity {
+    width: 60px;
+    height: 40px;
+    background-color: #e0e0e0;
+    animation: pulse 1.5s infinite;
+}
+
+.skeleton-button {
+    width: 120px;
+    height: 40px;
+    background-color: #e0e0e0;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .single-product {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .single-product-image {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .single-product-details h2 {
+        font-size: 24px;
+    }
+
+    .price {
+        font-size: 18px;
+    }
+
+    .product-info li {
+        font-size: 12px;
+    }
+
+    .add-to-cart-btn {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+}
+
+.retry-btn {
+    background-color: #1a2a44;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 4px;
+    margin: 10px 0;
+}
+
+.retry-btn:hover {
+    background-color: #2a3a54;
+}
