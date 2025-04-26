@@ -29,13 +29,13 @@ const CartSchema = new mongoose.Schema({
 });
 
 // Pre-save middleware to calculate totalPrice
-CartSchema.pre('save', function (next) {
+CartSchema.pre('save', function(next) {
   try {
-    if (isNaN(this.price) || this.price <= 0) {
-      throw new Error('Invalid price');
+    if (!this.price || isNaN(this.price) || this.price <= 0) {
+      throw new Error('Invalid price: Price must be a positive number');
     }
-    if (isNaN(this.quantity) || this.quantity <= 0) {
-      throw new Error('Invalid quantity');
+    if (!this.quantity || isNaN(this.quantity) || this.quantity <= 0) {
+      throw new Error('Invalid quantity: Quantity must be a positive number');
     }
     
     this.totalPrice = this.quantity * this.price;

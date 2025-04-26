@@ -1,13 +1,35 @@
 import express from 'express';
-import Cart from '../models/cartmodel.js';  // Fix the import case
+import Cart from '../models/cartmodel.js';
 const router = express.Router();
 
 // Add to Cart Route
 router.post('/add', async (req, res) => {
-  const { productName, price, quantity } = req.body;
-
   try {
-    // Create a new cart item
+    const { productName, price, quantity } = req.body;
+
+    // Validate input
+    if (!productName || !price || !quantity) {
+      return res.status(400).json({ 
+        message: 'Missing required fields: productName, price, or quantity' 
+      });
+    }
+
+    // Check if item already exists in cart
+    const existingItem = await Cart.findOne({ productName });
+    
+    if (existingItem) {
+      // Update quantity if item exists
+      existingItem.quantity += parseInt(quantity);
+      await existingItem.save();
+      
+      const cartItems = await Cart.find({});
+      return res.status(200).json({ 
+        message: 'Cart updated successfully',
+        items: cartItems 
+      });
+    }
+
+    // Create new cart item if it doesn't exist
     const newCartItem = new Cart({
       productName,
       price: parseFloat(price),
@@ -15,13 +37,18 @@ router.post('/add', async (req, res) => {
     });
 
     await newCartItem.save();
-
-    // Fetch all items in cart
     const cartItems = await Cart.find({});
-    res.status(201).json({ items: cartItems });
+
+    res.status(201).json({ 
+      message: 'Product added to cart successfully',
+      items: cartItems 
+    });
+
   } catch (error) {
     console.error('Error adding to cart:', error);
-    res.status(500).json({ message: 'Error adding product to cart' });
+    res.status(500).json({ 
+      message: error.message || 'Error adding product to cart' 
+    });
   }
 });
 
