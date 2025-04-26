@@ -1,0 +1,214 @@
+.footer {
+    background-color: #1a2a44;
+    color: white;
+    padding: 30px 15px;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #3a4a64;
+}
+
+.promo-section {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.promo-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.promo-icon {
+    font-size: 24px;
+}
+
+.banner-section {
+    position: relative;
+    width: 300px;
+    height: 150px;
+}
+
+.banner-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: 2px solid #f00;
+}
+
+.banner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.banner-text {
+    color: white;
+}
+
+.banner-text h3 {
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+
+.banner-text p {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.follow-btn {
+    background-color: #f5c518;
+    border: none;
+    padding: 5px 15px;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 4px;
+}
+
+.follow-btn:hover {
+    background-color: #e0b416;
+}
+
+.share-btn {
+    background-color: transparent;
+    border: 1px solid white;
+    color: white;
+    padding: 5px 15px;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 4px;
+}
+
+.share-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.footer-bottom {
+    max-width: 1200px;
+    margin: 20px auto 0;
+    text-align: center;
+}
+
+.social-media {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+.social-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+}
+
+.social-icon:hover {
+    opacity: 0.8;
+}
+
+.footer-links {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.footer-logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.footer-logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.serenity-logo {
+    width: 50px;
+    height: auto;
+}
+
+.footer-links a {
+    color: white;
+    text-decoration: none;
+    margin: 0 5px;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .footer-content {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .promo-section {
+        justify-content: center;
+        text-align: center;
+    }
+
+    .banner-section {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    .promo-item {
+        font-size: 12px;
+    }
+
+    .banner-text h3 {
+        font-size: 16px;
+    }
+
+    .banner-text p {
+        font-size: 12px;
+    }
+
+    .follow-btn,
+    .share-btn {
+        padding: 5px 10px;
+        font-size: 12px;
+    }
+
+    .social-icon {
+        width: 25px;
+        height: 25px;
+    }
+
+    .footer-links {
+        font-size: 12px;
+    }
+
+    .serenity-logo {
+        width: 40px;
+    }
+}
