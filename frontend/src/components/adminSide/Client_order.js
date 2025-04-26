@@ -1,31 +1,46 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Link } from 'react-router-dom';
-import './Client_order.css';  // Add this import
+import './Client_order.css';
 
 function ClientOrder() {
     const [clients, setClients] = useState([]);
+    const [orders, setOrders] = useState({});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        fetchClients();
+        fetchClientsAndOrders();
     }, []);
 
-    const fetchClients = async () => {
+    const fetchClientsAndOrders = async () => {
         try {
-            const response = await fetch('http://localhost:8000/client_details/');
-            if (!response.ok) {
-                throw new Error('Failed to fetch client data');
+            // Fetch clients
+            const clientResponse = await fetch('http://localhost:8000/client_details/');
+            if (!clientResponse.ok) throw new Error('Failed to fetch client data');
+            const clientData = await clientResponse.json();
+
+            if (!clientData.clients || !Array.isArray(clientData.clients)) {
+                throw new Error('Invalid client data format');
             }
-            const data = await response.json();
-            
-            // Check if data has the expected structure
-            if (!data.clients || !Array.isArray(data.clients)) {
-                throw new Error('Invalid data format received');
+
+            // Fetch orders
+            const orderResponse = await fetch('http://localhost:8000/custom_product/');
+            if (!orderResponse.ok) throw new Error('Failed to fetch order data');
+            const orderData = await orderResponse.json();
+
+            // Create a map of orders by client ID
+            const orderMap = {};
+            if (orderData.products) {
+                orderData.products.forEach(order => {
+                    if (order._id) {
+                        orderMap[order._id] = order;
+                    }
+                });
             }
-            
-            setClients(data.clients);
+
+            setClients(clientData.clients);
+            setOrders(orderMap);
             setLoading(false);
         } catch (err) {
             console.error('Error:', err);
@@ -53,7 +68,7 @@ function ClientOrder() {
                 <hr />
                 <button 
                     className="btn btn-outline-danger"
-                    onClick={fetchClients}
+                    onClick={fetchClientsAndOrders}
                 >
                     <i className="bi bi-arrow-clockwise me-2"></i>
                     Try Again
@@ -72,52 +87,61 @@ function ClientOrder() {
                 </div>
             ) : (
                 <div className="row">
-                    {clients.map((client) => (
-                        <div key={client._id} className="col-md-6 mb-4">
-                            <div className="card">
-                                <div className="card-header bg-primary text-white">
-                                    <h5 className="mb-2">Client Information</h5>
-                                    <small>Order ID: {client._id}</small>
-                                </div>
-                                <div className="card-body">
-                                    <ul className="list-unstyled">
-                                        <li className="mb-4">
-                                            <strong>Name: </strong>
-                                            {client.name}
-                                        </li>
-                                        <li className="mb-4">
-                                            <strong>Email: </strong>
-                                            {client.email}
-                                        </li>
-                                        <li className="mb-4">
-                                            <strong>Phone: </strong>
-                                            {client.phone}
-                                        </li>
-                                        <li className="mb-4">
-                                            <strong>Address: </strong>
-                                            {client.address}
-                                        </li>
-                                    </ul>
-                                    <div className="d-flex justify-content-center gap-2">
-                                        <Link 
-                                            to={`/orders?id=${client._id}`} 
-                                            className="btn btn-primary btn-sm"
-                                        >
-                                            <i className="bi bi-eye me-1"></i>
-                                            View Order Details
-                                        </Link>
-                                        <Link 
-                                            to={`/client-delete/${client._id}`}
-                                            className="btn btn-danger btn-sm"
-                                        >
-                                            <i className="bi bi-trash me-1"></i>
-                                            Delete
-                                        </Link>
+                    {clients.map((client) => {
+                        const order = orders[client._id];
+                        return (
+                            <div key={client._id} className="col-md-6 mb-4">
+                                <div className="card">
+                                    <div className="card-header bg-primary text-white">
+                                        <h5 className="mb-2">Client Information</h5>
+                                        <small>Order ID: {client._id}</small>
+                                    </div>
+                                    <div className="card-body">
+                                        <ul className="list-unstyled">
+                                            <li className="mb-4">
+                                                <strong>Name: </strong>
+                                                {client.name}
+                                            </li>
+                                            <li className="mb-4">
+                                                <strong>Email: </strong>
+                                                {client.email}
+                                            </li>
+                                            <li className="mb-4">
+                                                <strong>Phone: </strong>
+                                                {client.phone}
+                                            </li>
+                                            <li className="mb-4">
+                                                <strong>Address: </strong>
+                                                {client.address}
+                                            </li>
+                                            {order && (
+                                                <li className="mb-4">
+                                                    <strong>Order Total: </strong>
+                                                    Rs. {order.subtotal?.toFixed(2)}
+                                                </li>
+                                            )}
+                                        </ul>
+                                        <div className="d-flex justify-content-center gap-2">
+                                            <Link 
+                                                to={`/update-product/${client._id}`}
+                                                className="btn btn-primary btn-sm"
+                                            >
+                                                <i className="bi bi-eye me-1"></i>
+                                                View Order Details
+                                            </Link>
+                                            <Link 
+                                                to={`/client-delete/${client._id}`}
+                                                className="btn btn-danger btn-sm"
+                                            >
+                                                <i className="bi bi-trash me-1"></i>
+                                                Delete
+                                            </Link>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             )}
         </div>

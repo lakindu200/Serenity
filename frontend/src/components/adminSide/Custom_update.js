@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './Custom_update.css';
 
 function CustomUpdate() {
     const { id } = useParams();
@@ -201,7 +202,7 @@ function CustomUpdate() {
                     </button>
                     <button 
                         type="button" 
-                        className="btn btn-secondary"
+                        className="btn btn-secondary d-grid gap-2"
                         onClick={() => navigate('/orders')}
                     >
                         Cancel
