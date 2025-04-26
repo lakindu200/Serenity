@@ -14,6 +14,7 @@ import "react-toastify/dist/ReactToastify.css";
 import axios from 'axios';
 import { jsPDF } from 'jspdf';
 import "jspdf-autotable";
+import { useNavigate } from 'react-router-dom';
 
 const WarrantyClaimForm = () => {
   const [formData, setFormData] = useState({
@@ -36,6 +37,8 @@ const WarrantyClaimForm = () => {
     video: null, 
     resolution: "",
   });
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -69,40 +72,67 @@ const WarrantyClaimForm = () => {
     e.preventDefault();
 
     const formDataToSend = new FormData();
-    for (const key in formData) {
-      if (key !== 'images' && key !== 'video') {
+    
+    // Append all text fields
+    Object.keys(formData).forEach(key => {
+      if (key === 'size') {
+        formDataToSend.append('size', JSON.stringify(formData.size));
+      } else if (key !== 'images' && key !== 'video') {
         formDataToSend.append(key, formData[key]);
       }
-    }
+    });
+
+    // Append images
     formData.images.forEach(image => {
       formDataToSend.append('images', image);
     });
+
+    // Append video if exists
     if (formData.video) {
       formDataToSend.append('video', formData.video);
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/submit-claim', formDataToSend, {
+      const response = await axios.post('http://localhost:8000/api/warranty/submit-claim', formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
 
-      toast.success("Warranty claim submitted successfully!");
-      console.log(response.data);
-
-      // Generate PDF
-    generatePDF(formData);
-
-    // Page refresh after 5 sec
-    setTimeout(() => {
-      window.location.reload();
-    }, 5000);
-  } catch (error) {
-    toast.error("Error submitting warranty claim.");
-    console.error(error);
-  } 
-    
+      if (response.data.success) {
+        toast.success("Warranty claim submitted successfully!");
+        generatePDF(formData);
+        
+        // Reset form after 3 seconds
+        setTimeout(() => {
+          setFormData({
+            fullName: "",
+            address: "",
+            phoneNumber: "",
+            email: "",
+            brandModel: "",
+            size: [],
+            orderNumber: "",
+            purchaseDate: "",
+            proofOfPurchase: "",
+            warrantyCertNumber: "",
+            warrantyStart: "",
+            warrantyEnd: "",
+            warrantyType: "",
+            problemType: "",
+            issueStartDate: "",
+            images: [],
+            video: null,
+            resolution: "",
+            acknowledgeTerms: false,
+            confirmAccuracy: false
+          });
+        }, 3000);
+      }
+    } catch (error) {
+      console.error('Submission error:', error);
+      toast.error(error.response?.data?.message || "Error submitting warranty claim.");
+    }
   };
 
   // Function to generate the PDF
@@ -176,6 +206,10 @@ const WarrantyClaimForm = () => {
 
     // PDF file and trigger the download
     doc.save('Warranty_Claim_Proof.pdf');
+  };
+
+  const handleViewTerms = () => {
+    navigate('/terms-and-conditions');
   };
 
   return (
@@ -305,6 +339,21 @@ const WarrantyClaimForm = () => {
               }
               label="I confirm that the information provided is accurate and truthful."
             />
+          </Grid>
+
+          <Grid item xs={12} sx={{ mt: 2, mb: 2 }}>
+            <Button
+              variant="outlined"
+              onClick={handleViewTerms}
+              fullWidth
+              style={{ 
+                borderColor: "#2D168C",
+                color: "#2D168C",
+                marginBottom: "20px"
+              }}
+            >
+              View Terms and Conditions
+            </Button>
           </Grid>
 
           {/* Submit Button */}

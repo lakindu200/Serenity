@@ -18,8 +18,12 @@ const app = express();
 const PORT = process.env.PORT || 8000;
 
 // Middleware
+app.use(cors({
+  origin: 'http://localhost:3000',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type']
+}));
 app.use(express.json());
-app.use(cors());
 
 // Create uploads directory if it doesn't exist
 const uploadsDir = path.join(__dirname, 'uploads');
@@ -28,25 +32,40 @@ if (!fs.existsSync(uploadsDir)) {
 }
 app.use('/uploads', express.static(uploadsDir));
 
-// MongoDB connection
-const URL = process.env.MONGODB_URL;
+// MongoDB connection configuration
+const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect(process.env.MONGODB_URL, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      retryWrites: true,
+      w: 'majority',
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+    });
 
-mongoose.connect(URL, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+    console.log(`MongoDB Connected: ${conn.connection.host}`);
+  } catch (error) {
+    console.error(`Error: ${error.message}`);
+    process.exit(1);
+  }
+};
+
+// Call the connect function before starting the server
+connectDB().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}).catch((error) => {
+  console.error("Server failed to start:", error);
 });
 
-const connection = mongoose.connection;
-connection.once('open', () => {
-  console.log("MongoDB connection established successfully!");
-});
+// Enable debugging for transactions in development
+if (process.env.NODE_ENV === 'development') {
+  mongoose.set('debug', true);
+}
 
 // Routes
 app.use('/api/warranty', warrantyRoutes);
-
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server is running on port: ${PORT}`);
-});
 
 export default app;

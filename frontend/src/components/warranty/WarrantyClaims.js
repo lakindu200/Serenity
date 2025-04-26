@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import {
   Table,
   TableBody,
@@ -36,31 +38,36 @@ const WarrantyClaims = () => {
 
   const fetchClaims = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/admin/warranty-claims");
+      const response = await axios.get("http://localhost:8000/api/warranty/admin/claims");
       setClaims(response.data);
-      setFilteredClaims(response.data); // Initialize filtered claims
+      setFilteredClaims(response.data);
     } catch (error) {
       console.error("Error fetching claims:", error);
+      toast.error("Error loading warranty claims");
     }
   };
 
   // Handle Delete Claim
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/admin/warranty-claims/${id}`);
-      fetchClaims(); // Refresh the list
+      await axios.delete(`http://localhost:8000/api/warranty/admin/claims/${id}`);
+      fetchClaims();
+      toast.success("Claim deleted successfully");
     } catch (error) {
       console.error("Error deleting claim:", error);
+      toast.error("Error deleting claim");
     }
   };
 
   // Handle Change Status
   const handleStatusChange = async (id, newStatus) => {
     try {
-      await axios.put(`http://localhost:5000/update-claim-status/${id}`, { status: newStatus });
-      fetchClaims(); // Refresh the list
+      await axios.put(`http://localhost:8000/api/warranty/update-status/${id}`, { status: newStatus });
+      fetchClaims();
+      toast.success("Status updated successfully");
     } catch (error) {
       console.error("Error updating status:", error);
+      toast.error("Error updating claim status");
     }
   };
 
@@ -263,6 +270,7 @@ const WarrantyClaims = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };
