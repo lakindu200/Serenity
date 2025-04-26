@@ -1,0 +1,111 @@
+.warranty-page {
+    min-height: calc(100vh - 160px);
+    padding: 40px 0;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+}
+
+.warranty-container {
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+
+.warranty-form-paper {
+    padding: 40px;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+.warranty-title {
+    color: #2D168C;
+    text-align: center;
+    margin-bottom: 30px !important;
+    font-weight: 600 !important;
+}
+
+.warranty-form {
+    margin-top: 20px;
+}
+
+.warranty-form .MuiTextField-root {
+    margin-bottom: 16px;
+}
+
+.warranty-form .MuiButton-root {
+    margin-top: 16px;
+    padding: 12px 24px;
+    font-weight: 600;
+    text-transform: none;
+}
+
+.warranty-form .MuiTypography-h6 {
+    color: #2D168C;
+    margin-top: 24px;
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+
+.warranty-form .MuiFormControlLabel-root {
+    margin-right: 24px;
+}
+
+.warranty-form .file-upload-section {
+    margin: 24px 0;
+    padding: 16px;
+    border: 2px dashed #e0e0e0;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.warranty-form .file-upload-button {
+    margin: 8px;
+    background-color: #2D168C;
+    color: white;
+}
+
+.warranty-form .file-upload-button:hover {
+    background-color: #1a0d5c;
+}
+
+.warranty-form .terms-button {
+    margin-top: 24px;
+    border: 2px solid #ffffff;
+    color: #2D168C;
+}
+
+.warranty-form .submit-button {
+    margin-top: 32px;
+    background-color: #2D168C;
+    color: white;
+}
+
+.warranty-form .submit-button:hover {
+    background-color: #1a0d5c;
+}
+
+.warranty-form .upload-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.warranty-form .preview-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+@media (max-width: 600px) {
+    .warranty-form-paper {
+        padding: 20px;
+    }
+
+    .warranty-title {
+        font-size: 24px;
+    }
+
+    .warranty-form .MuiGrid-item {
+        padding: 8px !important;
+    }
+}

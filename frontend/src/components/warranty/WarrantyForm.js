@@ -7,6 +7,7 @@ import {
   Typography,
   Container,
   Grid,
+  Paper,
 } from "@mui/material";
 import { motion } from "framer-motion";
 import { ToastContainer, toast } from "react-toastify";
@@ -15,6 +16,9 @@ import axios from 'axios';
 import { jsPDF } from 'jspdf';
 import "jspdf-autotable";
 import { useNavigate } from 'react-router-dom';
+import Header from '../Header/Header';
+import Footer from '../Footer/Footer';
+import './WarrantyForm.css';
 
 const WarrantyClaimForm = () => {
   const [formData, setFormData] = useState({
@@ -73,65 +77,72 @@ const WarrantyClaimForm = () => {
 
     const formDataToSend = new FormData();
     
-    // Append all text fields
+    // Add basic text fields
     Object.keys(formData).forEach(key => {
       if (key === 'size') {
         formDataToSend.append('size', JSON.stringify(formData.size));
-      } else if (key !== 'images' && key !== 'video') {
+      } else if (key !== 'images' && key !== 'video' && key !== 'acknowledgeTerms' && key !== 'confirmAccuracy') {
         formDataToSend.append(key, formData[key]);
       }
     });
 
-    // Append images
-    formData.images.forEach(image => {
-      formDataToSend.append('images', image);
-    });
+    // Add images
+    if (formData.images.length > 0) {
+      formData.images.forEach(image => {
+        formDataToSend.append('images', image);
+      });
+    }
 
-    // Append video if exists
+    // Add video if exists
     if (formData.video) {
       formDataToSend.append('video', formData.video);
     }
 
     try {
-      const response = await axios.post('http://localhost:8000/api/warranty/submit-claim', formDataToSend, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const response = await axios.post(
+        'http://localhost:4000/api/warranty/submit-claim',
+        formDataToSend,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+          onUploadProgress: (progressEvent) => {
+            const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+            console.log('Upload Progress:', percentCompleted);
+          },
+        }
+      );
 
       if (response.data.success) {
         toast.success("Warranty claim submitted successfully!");
         generatePDF(formData);
-        
-        // Reset form after 3 seconds
-        setTimeout(() => {
-          setFormData({
-            fullName: "",
-            address: "",
-            phoneNumber: "",
-            email: "",
-            brandModel: "",
-            size: [],
-            orderNumber: "",
-            purchaseDate: "",
-            proofOfPurchase: "",
-            warrantyCertNumber: "",
-            warrantyStart: "",
-            warrantyEnd: "",
-            warrantyType: "",
-            problemType: "",
-            issueStartDate: "",
-            images: [],
-            video: null,
-            resolution: "",
-            acknowledgeTerms: false,
-            confirmAccuracy: false
-          });
-        }, 3000);
+        // Reset form
+        setFormData({
+          fullName: "",
+          address: "",
+          phoneNumber: "",
+          email: "",
+          brandModel: "",
+          size: [],
+          orderNumber: "",
+          purchaseDate: "",
+          proofOfPurchase: "",
+          warrantyCertNumber: "",
+          warrantyStart: "",
+          warrantyEnd: "",
+          warrantyType: "",
+          problemType: "",
+          issueStartDate: "",
+          images: [],
+          video: null,
+          resolution: "",
+          acknowledgeTerms: false,
+          confirmAccuracy: false
+        });
       }
     } catch (error) {
       console.error('Submission error:', error);
-      toast.error(error.response?.data?.message || "Error submitting warranty claim.");
+      toast.error(error.response?.data?.message || "Error submitting warranty claim. Please try again.");
     }
   };
 
@@ -213,166 +224,185 @@ const WarrantyClaimForm = () => {
   };
 
   return (
-    <Container maxWidth="md">
-      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-        <Typography variant="h4" gutterBottom>
-          <b>Mattress Warranty Claim Form</b>
-        </Typography>
-        <br />
-        <form onSubmit={handleSubmit}>
-          <Grid container spacing={2}>
-            {/* Customer Information */}
-            <Grid item xs={12}><Typography variant="h6">Customer Information</Typography></Grid>
-            {['fullName', 'address', 'phoneNumber', 'email'].map(field => (
-              <Grid item xs={12} sm={6} key={field}>
-                <TextField label={field.replace(/([A-Z])/g, ' $1')} name={field} fullWidth value={formData[field]} onChange={handleChange} required />
-              </Grid>
-            ))}
-
-            {/* Mattress Details */}
-            <Grid item xs={12}><Typography variant="h6">Mattress Details</Typography></Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField label="Brand & Model Name" name="brandModel" fullWidth value={formData.brandModel} onChange={handleChange} required />
-            </Grid>
-            <Grid item xs={12}>
-              <Typography>Size:</Typography>
-              {['Twin', 'Full', 'Queen', 'King'].map(size => (
-                <FormControlLabel key={size} control={<Checkbox name={size} checked={formData.size.includes(size)} onChange={handleCheckboxChange} />} label={size} />
-              ))}
-            </Grid>
-            {['orderNumber', 'purchaseDate', 'proofOfPurchase'].map(field => (
-              <Grid item xs={12} sm={6} key={field}>
-                <TextField type={field.includes('Date') ? 'date' : 'text'} label={field.replace(/([A-Z])/g, ' $1')} name={field} fullWidth value={formData[field]} onChange={handleChange} required InputLabelProps={{ shrink: true }} />
-              </Grid>
-            ))}
-
-            {/* Warranty Details */}
-            <Grid item xs={12}><Typography variant="h6">Warranty Details</Typography></Grid>
-            {['warrantyCertNumber', 'warrantyStart', 'warrantyEnd'].map(field => (
-              <Grid item xs={12} sm={6} key={field}>
-                <TextField
-                  type={field.includes('Start') || field.includes('End') ? 'date' : 'text'}
-                  label={field.replace(/([A-Z])/g, ' $1')}
-                  name={field}
-                  fullWidth
-                  value={formData[field]}
-                  onChange={handleChange}
-                  required
-                  InputLabelProps={{ shrink: true }}
-                />
-              </Grid>
-            ))}
-            <Grid item xs={12} sm={6}>
-              <TextField
-                select
-                name="warrantyType"
-                fullWidth
-                value={formData.warrantyType}
-                onChange={handleChange}
-                required
-                SelectProps={{ native: true }}
-              >
-                <option value="">Select Warranty Type</option>
-                <option value="Manufacturer">Manufacturer</option>
-                <option value="Extended">Extended</option>
-                <option value="Other">Other</option>
-              </TextField>
-            </Grid>
-
-            {/* Issue Description */}
-            <Grid item xs={12}><Typography variant="h6">Issue Description</Typography></Grid>
-            {['problemType', 'issueStartDate'].map(field => (
-              <Grid item xs={12} sm={6} key={field}>
-                <TextField type={field.includes('Date') ? 'date' : 'text'} label={field.replace(/([A-Z])/g, ' $1')} name={field} fullWidth value={formData[field]} onChange={handleChange} required InputLabelProps={{ shrink: true }} />
-              </Grid>
-            ))}
-
-            {/* Image and Video Upload Buttons */}
-            <Grid item xs={12}>
-              <Grid container spacing={2}>
-                <Grid item>
-                  <Button variant="contained" component="label" style={{ backgroundColor: "black", color: "white" }}>
-                    Upload Images
-                    <input type="file" multiple accept="image/*" hidden onChange={handleImageUpload} />
-                  </Button>
-                </Grid>
-                <Grid item>
-                  <Button variant="contained" component="label" style={{ backgroundColor: "black", color: "white" }}>
-                    Upload Video
-                    <input type="file" accept="video/*" hidden onChange={handleVideoUpload} />
-                  </Button>
-                </Grid>
-              </Grid>
-              {/* Upload Limits Message */}
-              <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary' }}>
-                You can upload up to 3 images and 1 video as proof.
+    <>
+      <Header />
+      <div className="warranty-page">
+        <Container maxWidth="md" className="warranty-container">
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            transition={{ duration: 0.5 }}
+          >
+            <Paper elevation={3} className="warranty-form-paper">
+              <Typography variant="h4" gutterBottom className="warranty-title">
+                Mattress Warranty Claim Form
               </Typography>
-            </Grid>
+              
+              <form onSubmit={handleSubmit} className="warranty-form">
+                {/* Customer Information Section */}
+                <div className="form-section">
+                  <div className="form-section-title">Customer Information</div>
+                  <Grid container spacing={2}>
+                    {['fullName', 'address', 'phoneNumber', 'email'].map(field => (
+                      <Grid item xs={12} sm={6} key={field} className="form-row">
+                        <TextField label={field.replace(/([A-Z])/g, ' $1')} name={field} fullWidth value={formData[field]} onChange={handleChange} required />
+                      </Grid>
+                    ))}
+                  </Grid>
+                </div>
 
-            {/* Requested Resolution */}
-            <Grid item xs={12}><Typography variant="h6">Requested Resolution</Typography></Grid>
-            {['Repair', 'Replacement', 'Refund'].map(res => (
-              <Grid item key={res}>
-                <FormControlLabel control={<Checkbox name="resolution" checked={formData.resolution === res} onChange={() => setFormData({ ...formData, resolution: res })} />} label={res} />
-              </Grid>
-            ))}
+                <div className="section-divider" />
 
-            {/* Acknowledgment Checkboxes */}
-          <Grid item xs={12}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={formData.acknowledgeTerms}
-                  onChange={(e) => setFormData({ ...formData, acknowledgeTerms: e.target.checked })}
-                  required
-                />
-              }
-              label="I acknowledge that my claim is subject to the manufacturer’s warranty terms and conditions."
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={formData.confirmAccuracy}
-                  onChange={(e) => setFormData({ ...formData, confirmAccuracy: e.target.checked })}
-                  required 
-                />
-              }
-              label="I confirm that the information provided is accurate and truthful."
-            />
-          </Grid>
+                {/* Mattress Details Section */}
+                <div className="form-section">
+                  <div className="form-section-title">Mattress Details</div>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                      <TextField label="Brand & Model Name" name="brandModel" fullWidth value={formData.brandModel} onChange={handleChange} required />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Typography>Size:</Typography>
+                      {['Twin', 'Full', 'Queen', 'King'].map(size => (
+                        <FormControlLabel key={size} control={<Checkbox name={size} checked={formData.size.includes(size)} onChange={handleCheckboxChange} />} label={size} />
+                      ))}
+                    </Grid>
+                    {['orderNumber', 'purchaseDate', 'proofOfPurchase'].map(field => (
+                      <Grid item xs={12} sm={6} key={field}>
+                        <TextField type={field.includes('Date') ? 'date' : 'text'} label={field.replace(/([A-Z])/g, ' $1')} name={field} fullWidth value={formData[field]} onChange={handleChange} required InputLabelProps={{ shrink: true }} />
+                      </Grid>
+                    ))}
+                  </Grid>
+                </div>
 
-          <Grid item xs={12} sx={{ mt: 2, mb: 2 }}>
-            <Button
-              variant="outlined"
-              onClick={handleViewTerms}
-              fullWidth
-              style={{ 
-                borderColor: "#2D168C",
-                color: "#2D168C",
-                marginBottom: "20px"
-              }}
-            >
-              View Terms and Conditions
-            </Button>
-          </Grid>
+                <div className="section-divider" />
 
-          {/* Submit Button */}
-          <Grid item xs={12}>
-            <Button
-              type="submit"
-              variant="contained"
-              fullWidth
-              style={{ backgroundColor: "black", color: "white" }}
-              disabled={!formData.acknowledgeTerms || !formData.confirmAccuracy}
-            >
-              Submit
-            </Button>
-          </Grid>
-          </Grid>
-        </form>
-      </motion.div>
-      <ToastContainer position="top-right" autoClose={3000} />
-    </Container>
+                {/* Warranty Details Section */}
+                <div className="form-section">
+                  <div className="form-section-title">Warranty Details</div>
+                  <Grid container spacing={2}>
+                    {['warrantyCertNumber', 'warrantyStart', 'warrantyEnd'].map(field => (
+                      <Grid item xs={12} sm={6} key={field}>
+                        <TextField
+                          type={field.includes('Start') || field.includes('End') ? 'date' : 'text'}
+                          label={field.replace(/([A-Z])/g, ' $1')}
+                          name={field}
+                          fullWidth
+                          value={formData[field]}
+                          onChange={handleChange}
+                          required
+                          InputLabelProps={{ shrink: true }}
+                        />
+                      </Grid>
+                    ))}
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        select
+                        name="warrantyType"
+                        fullWidth
+                        value={formData.warrantyType}
+                        onChange={handleChange}
+                        required
+                        SelectProps={{ native: true }}
+                      >
+                        <option value="">Select Warranty Type</option>
+                        <option value="Manufacturer">Manufacturer</option>
+                        <option value="Extended">Extended</option>
+                        <option value="Other">Other</option>
+                      </TextField>
+                    </Grid>
+                  </Grid>
+                </div>
+
+                <div className="section-divider" />
+
+                {/* Issue Description Section */}
+                <div className="form-section">
+                  <div className="form-section-title">Issue Description</div>
+                  <Grid container spacing={2}>
+                    {['problemType', 'issueStartDate'].map(field => (
+                      <Grid item xs={12} sm={6} key={field}>
+                        <TextField type={field.includes('Date') ? 'date' : 'text'} label={field.replace(/([A-Z])/g, ' $1')} name={field} fullWidth value={formData[field]} onChange={handleChange} required InputLabelProps={{ shrink: true }} />
+                      </Grid>
+                    ))}
+                  </Grid>
+                </div>
+
+                {/* File Upload Section */}
+                <div className="form-section">
+                  <div className="form-section-title">Supporting Documentation</div>
+                  <Grid container spacing={2}>
+                    <Grid item>
+                      <Button variant="contained" component="label" style={{ backgroundColor: "black", color: "white" }}>
+                        Upload Images
+                        <input type="file" multiple accept="image/*" hidden onChange={handleImageUpload} />
+                      </Button>
+                    </Grid>
+                    <Grid item>
+                      <Button variant="contained" component="label" style={{ backgroundColor: "black", color: "white" }}>
+                        Upload Video
+                        <input type="file" accept="video/*" hidden onChange={handleVideoUpload} />
+                      </Button>
+                    </Grid>
+                  </Grid>
+                  {/* Upload Limits Message */}
+                  <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary' }}>
+                    You can upload up to 3 images and 1 video as proof.
+                  </Typography>
+                </div>
+
+                {/* Terms and Acknowledgment */}
+                <div className="terms-section">
+                  <Button
+                    variant="outlined"
+                    onClick={handleViewTerms}
+                    fullWidth
+                    className="terms-button"
+                  >
+                    View Terms and Conditions
+                  </Button>
+                </div>
+
+                <div className="acknowledgment-section">
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={formData.acknowledgeTerms}
+                        onChange={(e) => setFormData({ ...formData, acknowledgeTerms: e.target.checked })}
+                        required
+                      />
+                    }
+                    label="I acknowledge that my claim is subject to the manufacturer's warranty terms and conditions."
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={formData.confirmAccuracy}
+                        onChange={(e) => setFormData({ ...formData, confirmAccuracy: e.target.checked })}
+                        required 
+                      />
+                    }
+                    label="I confirm that the information provided is accurate and truthful."
+                  />
+                </div>
+
+                {/* Submit Button */}
+                <Button
+                  type="submit"
+                  variant="contained"
+                  fullWidth
+                  className="submit-button"
+                  disabled={!formData.acknowledgeTerms || !formData.confirmAccuracy}
+                >
+                  Submit Warranty Claim
+                </Button>
+              </form>
+            </Paper>
+          </motion.div>
+          <ToastContainer position="top-right" autoClose={3000} />
+        </Container>
+      </div>
+      <Footer />
+    </>
   );
 };
 

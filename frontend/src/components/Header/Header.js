@@ -44,15 +44,14 @@ const Header = () => {
                         <ul className={`nav-links ${isDrawerOpen ? "open" : ""}`}>
                             <li><Link to="/" onClick={toggleDrawer}>Home</Link></li>
                             <li><Link to="/shop" onClick={toggleDrawer}>Shop</Link></li>
-                            <li><Link to="/contact" onClick={toggleDrawer}>Contact Us</Link></li>
-                            <li><Link to="/account" onClick={toggleDrawer}>My Account</Link></li>
+                            <li><Link to="/warranty" onClick={toggleDrawer}>Warranty Claim</Link></li>
                         </ul>
                     </div>
 
                     <div className="nav-actions">
-                        <Link to="/warranty" className="nav-button">
-                            <GiReceiveMoney size={20} />
-                            <span>Warranty</span>
+                        <Link to="/account" className="nav-button">
+                            
+                            <span>My Account</span>
                         </Link>
                         <Link to="/cartview" className="nav-button cart-button">
                             <FaShoppingCart size={20} />
