@@ -1,10 +1,27 @@
-import React, { useState } from "react";
-import { FaBars, FaTimes } from "react-icons/fa";
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { FaBars, FaTimes, FaShoppingCart } from "react-icons/fa";
+import { GiReceiveMoney } from "react-icons/gi";
+import axios from 'axios';
 import "./Header.css";
 import { assets } from "../../assets/assets";
 
 const Header = () => {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    const [cartCount, setCartCount] = useState(0);
+
+    useEffect(() => {
+        const fetchCartCount = async () => {
+            try {
+                const response = await axios.get('http://localhost:4000/api/cart/getAll');
+                setCartCount(response.data.length);
+            } catch (error) {
+                console.error('Error fetching cart count:', error);
+            }
+        };
+
+        fetchCartCount();
+    }, []);
 
     const toggleDrawer = () => {
         setIsDrawerOpen((prev) => !prev);
@@ -15,32 +32,45 @@ const Header = () => {
             <nav className="nav">
                 <div className="nav-brand">
                     <div className="logo-container">
-                        <button className="hamburger" >
-                            {isDrawerOpen ? <FaTimes onClick={() => setIsDrawerOpen(!isDrawerOpen)} size={24} /> : <FaBars onClick={() => setIsDrawerOpen(!isDrawerOpen)} size={24} />}
+                        <button className="hamburger">
+                            {isDrawerOpen ? 
+                                <FaTimes onClick={toggleDrawer} size={24} /> : 
+                                <FaBars onClick={toggleDrawer} size={24} />
+                            }
                         </button>
-                        <a href="/">
+                        <Link to="/">
                             <img src={assets.serenity_Logo} alt="Serenity Logo" className="serenity-logo" />
-                        </a>
+                        </Link>
                         <ul className={`nav-links ${isDrawerOpen ? "open" : ""}`}>
-                            <li><a href="/" onClick={toggleDrawer}>Home</a></li>
-                            <li><a href="/shop" onClick={toggleDrawer}>Shop</a></li>
-                            <li><a href="/contact" onClick={toggleDrawer}>Contact Us</a></li>
-                            <li><a href="/account" onClick={toggleDrawer}>My Account</a></li>
+                            <li><Link to="/" onClick={toggleDrawer}>Home</Link></li>
+                            <li><Link to="/shop" onClick={toggleDrawer}>Shop</Link></li>
+                            <li><Link to="/contact" onClick={toggleDrawer}>Contact Us</Link></li>
+                            <li><Link to="/account" onClick={toggleDrawer}>My Account</Link></li>
                         </ul>
                     </div>
 
-                    <div className="cart">
-                        <span>🛒 0 items - Rs.0.00</span>
+                    <div className="nav-actions">
+                        <Link to="/warranty" className="nav-button">
+                            <GiReceiveMoney size={20} />
+                            <span>Warranty</span>
+                        </Link>
+                        <Link to="/cartview" className="nav-button cart-button">
+                            <FaShoppingCart size={20} />
+                            <span>Cart</span>
+                            {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
+                        </Link>
                     </div>
                 </div>
-                {isDrawerOpen &&
+                {isDrawerOpen && (
                     <ul className={`nav-links ${isDrawerOpen ? "open" : ""}`}>
-                        <li><a href="/" onClick={toggleDrawer}>Home</a></li>
-                        <li><a href="/shop" onClick={toggleDrawer}>Shop</a></li>
-                        <li><a href="/contact" onClick={toggleDrawer}>Contact Us</a></li>
-                        <li><a href="/account" onClick={toggleDrawer}>My Account</a></li>
+                        <li><Link to="/" onClick={toggleDrawer}>Home</Link></li>
+                        <li><Link to="/shop" onClick={toggleDrawer}>Shop</Link></li>
+                        <li><Link to="/warranty" onClick={toggleDrawer}>Warranty</Link></li>
+                        <li><Link to="/cartview" onClick={toggleDrawer}>Cart</Link></li>
+                        <li><Link to="/contact" onClick={toggleDrawer}>Contact Us</Link></li>
+                        <li><Link to="/account" onClick={toggleDrawer}>My Account</Link></li>
                     </ul>
-                }
+                )}
             </nav>
         </header>
     );

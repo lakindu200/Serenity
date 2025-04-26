@@ -15,6 +15,7 @@ function SingleProduct() {
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [quantity, setQuantity] = useState(1);
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -65,6 +66,29 @@ function SingleProduct() {
             }
         };
         fetchProduct();
+    };
+
+    const handleAddToCart = async () => {
+        try {
+            const cartItem = {
+                productId: product.id,
+                productName: product.name,
+                price: product.price,
+                quantity: quantity,
+                image: product.image
+            };
+
+            const response = await axios.post('http://localhost:4000/api/cart/add', cartItem);
+
+            if (response.data.success) {
+                alert('Product added to cart successfully!');
+            } else {
+                throw new Error(response.data.message);
+            }
+        } catch (error) {
+            console.error('Error adding to cart:', error);
+            alert('Failed to add product to cart');
+        }
     };
 
     if (loading) {
@@ -121,8 +145,20 @@ function SingleProduct() {
                                 {`${product.stock} - (${product.stock_quantity >= 1 && product.stock_quantity} available)`}
                             </p>
                             <div className="add-to-cart-section">
-                                <input type="number" defaultValue={1} min={1} className="quantity-input" />
-                                <button className="add-to-cart-btn">Add to cart</button>
+                                <input 
+                                    type="number" 
+                                    value={quantity}
+                                    onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value)))}
+                                    min="1"
+                                    className="quantity-input" 
+                                />
+                                <button 
+                                    className="add-to-cart-btn"
+                                    onClick={handleAddToCart}
+                                    disabled={!product.stock_quantity}
+                                >
+                                    Add to Cart
+                                </button>
                             </div>
                             <button onClick={() => navigate("/shop")} className="back-btn-1">
                                 Back to Shop
