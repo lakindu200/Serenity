@@ -127,7 +127,6 @@ function Shop() {
               <option value="">All Categories</option>
               <option value="Luxury">Luxury</option>
               <option value="Orthopedic">Orthopedic</option>
-              <option value="Cooling">Cooling</option>
               <option value="Budget-Friendly">Budget-Friendly</option>
             </select>
             <select name="size" value={filters.size} onChange={handleFilterChange} className="filter-dropdown">
@@ -137,7 +136,7 @@ function Shop() {
               <option value="Queen">Queen</option>
               <option value="King">King</option>
               <option value="Standard">Standard</option>
-              <option value="Custom">Custom</option>
+              
             </select>
             <select value={sortOption} onChange={handleSortChange} className="sort-dropdown">
               <option value="default">Default sorting</option>
