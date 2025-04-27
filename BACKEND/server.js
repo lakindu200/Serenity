@@ -3,6 +3,9 @@ import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import customProductRoutes from './routes/Custom_product_route.js'; 
+import clientDetailsRoutes from './routes/Client_details_route.js';
+
 import { fileURLToPath } from 'url';
 import fs from 'fs';
 import path from 'path';
@@ -73,6 +76,18 @@ app.use((err, req, res, next) => {
     timestamp: new Date().toISOString()
   });
 });
+
+app.use('/custom_product', customProductRoutes);
+app.use('/client_details', clientDetailsRoutes);
+app.listen(PORT, () => {
+  console.log(`Server is running on port: ${PORT}`);
+});
+
+
+
+
+
+
 
 // Start server
 const startServer = async () => {
