@@ -44,25 +44,10 @@ const customProductSchema = new mongoose.Schema({
         required: true,
         min: 1
     },
-    clientName: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    clientEmail: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    clientPhone: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    clientAddress: {
-        type: String,
-        required: true,
-        trim: true
+    clientId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Client',
+        required: true
     },
     subtotal: {
         type: Number,
@@ -133,3 +118,28 @@ const handleSubmitOrder = async () => {
         setLoading(false);
     }
 };
+
+const sampleOrders = [
+    {
+        "_id": "123456789",
+        "length": 100,
+        "width": 200,
+        "color": "Blue",
+        "material": "Memory Foam Mattress",
+        "pillow_type": "decorative",
+        "pillow_size": "medium",
+        "pillow_color": "White",
+        "pillow_quantity": 2,
+        "clientId": {
+            "name": "John Doe",
+            "email": "john@example.com",
+            "phone": "1234567890",
+            "address": "123 Street"
+        },
+        "subtotal": 5000,
+        "paymentAmount": 3000,
+        "balance": 2000,
+        "status": "pending",
+        "orderDate": new Date().toISOString()
+    }
+];

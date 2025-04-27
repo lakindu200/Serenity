@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+const API_BASE_URL = 'http://localhost:4000/api';
+
 function OrderDelete() {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -10,26 +12,28 @@ function OrderDelete() {
 
     useEffect(() => {
         if (!id) {
-            navigate('/orders');
+            navigate('/custom/orders');
         }
     }, [id, navigate]);
 
     const handleDelete = async () => {
         setLoading(true);
         try {
-            const response = await fetch(`http://localhost:8000/custom_product/delete/${id}`, {
+            const response = await fetch(`${API_BASE_URL}/custom_product/delete/${id}`, {
                 method: 'DELETE',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 }
             });
 
             if (!response.ok) {
-                throw new Error('Failed to delete order');
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to delete order');
             }
 
             alert('Order deleted successfully');
-            navigate('/orders');
+            navigate('/custom/orders');
         } catch (err) {
             console.error('Error:', err);
             setError(err.message);
@@ -43,7 +47,7 @@ function OrderDelete() {
             <div className="card border-danger">
                 <div className="card-header bg-danger text-white">
                     <h3 className="mb-0">Delete Order</h3>
-                    <small>Location: Orders / Delete</small>
+                    <small>Location: Custom Orders / Delete</small>
                 </div>
                 <div className="card-body">
                     <div className="alert alert-warning">
@@ -52,7 +56,8 @@ function OrderDelete() {
                     </div>
                     
                     <p className="mb-3">
-                        Are you sure you want to delete this order?
+                        Are you sure you want to delete this order? This will permanently remove
+                        the order and all associated data.
                     </p>
 
                     {error && (
@@ -62,9 +67,9 @@ function OrderDelete() {
                         </div>
                     )}
 
-                    <div className="mt-4">
+                    <div className="mt-4 d-flex gap-2">
                         <button
-                            className="btn btn-danger me-2"
+                            className="btn btn-danger"
                             onClick={handleDelete}
                             disabled={loading}
                         >
@@ -82,7 +87,7 @@ function OrderDelete() {
                         </button>
                         <button
                             className="btn btn-secondary"
-                            onClick={() => navigate('/orders')}
+                            onClick={() => navigate('/custom/orders')}
                             disabled={loading}
                         >
                             <i className="bi bi-x-circle me-2"></i>

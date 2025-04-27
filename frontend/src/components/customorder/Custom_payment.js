@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Custom_payment.css';
 
+// Add API base URL constant at the top
+const API_BASE_URL = 'http://localhost:4000/api';
+
 function CustomPayment() {
     const navigate = useNavigate();
     const [priceData, setPriceData] = useState(null);
@@ -36,56 +39,53 @@ function CustomPayment() {
             return;
         }
 
-        const paid = parseFloat(paymentAmount);
-        const total = priceData?.subTotal || 0;
-
-        if (paid < total) {
-            setError('Payment amount must be at least equal to the total amount');
-            return;
-        }
-
         setLoading(true);
         try {
-            // Create combined order payload
             const orderPayload = {
-                // Product details
-                length: orderData.length,
-                width: orderData.width,
+                length: Math.abs(Number(orderData.length)),
+                width: Math.abs(Number(orderData.width)),
                 color: orderData.color,
                 material: orderData.material,
                 pillow_type: orderData.pillow_type,
                 pillow_size: orderData.pillow_size,
                 pillow_color: orderData.pillow_color,
-                pillow_quantity: orderData.pillow_quantity,
-                // Client details
+                pillow_quantity: Math.abs(Number(orderData.pillow_quantity)),
                 clientName: clientData.name,
                 clientEmail: clientData.email,
                 clientPhone: clientData.phone,
                 clientAddress: clientData.address,
-                // Payment details
-                subtotal: priceData.subTotal,
-                paymentAmount: paid,
-                balance: calculateBalance(paymentAmount),
-                orderDate: new Date(),
-                status: 'pending'
+                subtotal: Math.abs(Number(priceData.subTotal)),
+                paymentAmount: Math.abs(parseFloat(paymentAmount)),
+                balance: calculateBalance(paymentAmount)
             };
 
-            // Save order
-            const response = await fetch('http://localhost:8000/custom_product/add', {
+            console.log('Sending order payload:', orderPayload);
+
+            const response = await fetch(`${API_BASE_URL}/custom_product/add`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 },
                 body: JSON.stringify(orderPayload)
             });
 
+            // Check response status first
             if (!response.ok) {
-                throw new Error('Failed to place order');
+                const errorData = await response.json().catch(() => ({
+                    message: 'Failed to parse error response'
+                }));
+                throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
             }
 
-            const result = await response.json();
+            // Try to parse JSON response
+            const result = await response.json().catch(() => {
+                throw new Error('Invalid JSON response from server');
+            });
 
-            // Clear localStorage
+            console.log('Order created:', result);
+
+            // Clear storage and navigate only if we get here
             localStorage.removeItem('tempProductData');
             localStorage.removeItem('tempClientData');
             localStorage.removeItem('priceData');

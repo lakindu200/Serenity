@@ -5,6 +5,24 @@
     padding: 0 15px;
 }
 
+.shop-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 15px;
+}
+
+.shop-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.shop-title {
+    font-size: 32px;
+    color: #1a2a44;
+    margin-bottom: 20px;
+}
+
 .shop-section {
     padding: 30px 0;
 }
@@ -18,8 +36,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
-    padding: 0 30px;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .shop-controls p {
@@ -28,23 +49,37 @@
 
 .filters {
     display: flex;
-    gap: 10px;
+    gap: 15px;
     flex-wrap: wrap;
 }
 
 .filter-dropdown,
 .sort-dropdown {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
     font-size: 14px;
+    color: #1a2a44;
+    background-color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-dropdown:hover,
+.sort-dropdown:hover {
+    border-color: #F4B000;
 }
 
 .product-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    padding: 0 30px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    padding: 20px 0;
+}
+
+.results-count {
+    font-size: 14px;
+    color: #666;
 }
 
 .retry-btn {
@@ -65,15 +100,23 @@
 @media (max-width: 768px) {
     .shop-controls {
         flex-direction: column;
-        gap: 10px;
+        gap: 20px;
     }
 
     .filters {
+        width: 100%;
         justify-content: center;
     }
 
+    .filter-dropdown,
+    .sort-dropdown {
+        width: 100%;
+        max-width: 200px;
+    }
+
     .product-grid {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 20px;
     }
 
     .shop-section h1 {

@@ -12,43 +12,53 @@ body {
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 15px;
+    padding: 20px 15px;
 }
 
-.new-arrivals-section {
-    padding: 30px 0;
-}
-
-.new-arrivals-section h1 {
-    font-size: 32px;
-    margin-bottom: 20px;
-}
-
+.new-arrivals-section, 
 .category-section {
-    padding: 30px 0;
+    padding: 40px 0;
 }
 
-.category-section h1 {
+.section-title {
     font-size: 32px;
-    margin-bottom: 20px;
+    font-weight: 600;
+    color: #1a2a44;
+    margin-bottom: 30px;
+    text-align: center;
+    position: relative;
+    padding-bottom: 15px;
 }
 
-.category-block {
-    margin-bottom: 40px;
-}
-
-.category-block h2 {
-    font-size: 24px;
-    margin-bottom: 15px;
-    border-bottom: 2px solid #1a2a44;
-    padding-bottom: 5px;
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 3px;
+    background: #F4B000;
 }
 
 .product-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    padding: 30px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Increased minimum width */
+    gap: 30px;
+    padding: 20px 0;
+}
+
+.category-block {
+    margin-bottom: 50px;
+}
+
+.category-title {
+    font-size: 24px;
+    color: #2D168C;
+    margin-bottom: 20px;
+    padding: 10px 20px;
+    background: rgba(244, 176, 0, 0.1);
+    border-radius: 8px;
 }
 
 .single-product-container {
@@ -133,7 +143,8 @@ body {
     }
 
     .product-grid {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 20px;
     }
 
     .single-product {
@@ -141,24 +152,21 @@ body {
         align-items: center;
     }
 
-    .new-arrivals-section h1,
-    .category-section h1 {
+    .section-title {
         font-size: 28px;
     }
 
-    .category-block h2 {
+    .category-title {
         font-size: 20px;
     }
 }
 
 @media (max-width: 480px) {
-
-    .new-arrivals-section h1,
-    .category-section h1 {
+    .section-title {
         font-size: 24px;
     }
 
-    .category-block h2 {
+    .category-title {
         font-size: 18px;
     }
 }

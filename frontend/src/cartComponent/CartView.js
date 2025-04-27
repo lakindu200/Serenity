@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FaTrash, FaShoppingCart, FaCreditCard } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify'; // Add this import
+import 'react-toastify/dist/ReactToastify.css'; // Add this import
 import './CartView.css';
 
 const API_BASE_URL = 'http://localhost:4000'; // Add base URL constant
@@ -103,55 +105,55 @@ const CartView = () => {
     e.preventDefault();
     
     if (!validateForm()) {
-      return;
-    }
-
-    if (!receiptFile) {
-      setFormErrors({ receipt: 'Please upload a bank receipt' });
-      return;
+        return;
     }
 
     setLoading(true);
-
     try {
-      const formData = new FormData();
-      formData.append('phone', phone);
-      formData.append('email', email);
-      formData.append('address', address);
-      formData.append('deliveryLocation', deliveryLocation);
-      formData.append('subtotal', subtotal);
-      formData.append('deliveryFee', deliveryFee);
-      formData.append('totalCost', totalCost);
-      formData.append('products', JSON.stringify(cartItems));
-      formData.append('receipt', receiptFile);
+        const formData = new FormData();
+        
+        // Add required fields
+        formData.append('phone', phone.trim());
+        formData.append('email', email.trim());
+        formData.append('address', address.trim());
+        formData.append('deliveryLocation', deliveryLocation);
+        formData.append('subtotal', subtotal);
+        formData.append('deliveryFee', deliveryFee);
+        formData.append('totalCost', totalCost);
+        formData.append('products', JSON.stringify(cartItems));
 
-      // Create payment record
-      const response = await axios.post(`${API_BASE_URL}/api/payment/create`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
+        // Add receipt file if exists
+        if (receiptFile) {
+            formData.append('receipt', receiptFile);
         }
-      });
 
-      if (response.data.success) {
-        // Clear cart after successful order
-        await axios.delete(`${API_BASE_URL}/api/cart/clear`);
-        alert('Order placed successfully!');
-        navigate('/shop'); // Redirect to shop instead of payment details
-      } else {
-        throw new Error(response.data.message || 'Failed to place order');
-      }
+        const response = await axios.post(
+            `${API_BASE_URL}/api/payment/create`,
+            formData,
+            {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }
+        );
+
+        if (response.data.success) {
+            await axios.delete(`${API_BASE_URL}/api/cart/clear`);
+            toast.success('Order placed successfully!');
+            navigate('/shop');
+        }
     } catch (err) {
-      setError(err.response?.data?.message || 'Error placing order. Please try again.');
-      console.error('Order error:', err);
+        setError(err.response?.data?.message || 'Error placing order');
+        console.error('Order error:', err);
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
 
   return (
     <div className="cart-container">
       <div className="cart-header">
-        <FaShoppingCart className="cart-icon" />
+        <div className="cart-icon" />
         <h1>Your Shopping Cart</h1>
       </div>
 
@@ -318,6 +320,7 @@ const CartView = () => {
           </form>
         </div>
       )}
+      <ToastContainer /> {/* Add ToastContainer */}
     </div>
   );
 };

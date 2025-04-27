@@ -40,12 +40,26 @@ router.post('/submit-claim', upload.fields([
   session.startTransaction();
 
   try {
+    console.log('Received form data:', req.body);
+    console.log('Received files:', req.files);
+
+    if (!req.body || Object.keys(req.body).length === 0) {
+      throw new Error('No form data received');
+    }
+
+    // Extract form data
     const {
-      fullName, address, phoneNumber, email, brandModel,
-      size, orderNumber, purchaseDate, proofOfPurchase,
-      warrantyCertNumber, warrantyStart, warrantyEnd,
-      warrantyType, problemType, issueStartDate, resolution
+      fullName, address, phoneNumber, email,
+      brandModel, size, orderNumber, purchaseDate,
+      proofOfPurchase, warrantyCertNumber,
+      warrantyStart, warrantyEnd, warrantyType,
+      problemType, issueStartDate, resolution
     } = req.body;
+
+    // Validate required fields
+    if (!fullName || !email || !phoneNumber) {
+      throw new Error('Missing required fields');
+    }
 
     // Parse size array from JSON string
     const sizeArray = JSON.parse(size);
@@ -101,11 +115,10 @@ router.post('/submit-claim', upload.fields([
       }
     }
 
-    console.error('Warranty claim submission error:', error);
-    res.status(500).json({
+    console.error('Warranty claim error:', error);
+    res.status(400).json({
       success: false,
-      message: 'Error submitting warranty claim',
-      error: error.message
+      message: error.message || 'Failed to submit warranty claim'
     });
   } finally {
     session.endSession();

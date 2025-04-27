@@ -73,75 +73,76 @@ const WarrantyClaimForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const formDataToSend = new FormData();
     
-    // Add basic text fields
-    Object.keys(formData).forEach(key => {
-      if (key === 'size') {
-        formDataToSend.append('size', JSON.stringify(formData.size));
-      } else if (key !== 'images' && key !== 'video' && key !== 'acknowledgeTerms' && key !== 'confirmAccuracy') {
-        formDataToSend.append(key, formData[key]);
-      }
-    });
-
-    // Add images
-    if (formData.images.length > 0) {
-      formData.images.forEach(image => {
-        formDataToSend.append('images', image);
-      });
-    }
-
-    // Add video if exists
-    if (formData.video) {
-      formDataToSend.append('video', formData.video);
-    }
-
     try {
-      const response = await axios.post(
-        'http://localhost:4000/api/warranty/submit-claim',
-        formDataToSend,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-          onUploadProgress: (progressEvent) => {
-            const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-            console.log('Upload Progress:', percentCompleted);
-          },
+        // Validate form data before submission
+        if (!formData.fullName || !formData.email || !formData.phoneNumber) {
+            toast.error("Please fill in all required fields");
+            return;
         }
-      );
 
-      if (response.data.success) {
-        toast.success("Warranty claim submitted successfully!");
-        generatePDF(formData);
-        // Reset form
-        setFormData({
-          fullName: "",
-          address: "",
-          phoneNumber: "",
-          email: "",
-          brandModel: "",
-          size: [],
-          orderNumber: "",
-          purchaseDate: "",
-          proofOfPurchase: "",
-          warrantyCertNumber: "",
-          warrantyStart: "",
-          warrantyEnd: "",
-          warrantyType: "",
-          problemType: "",
-          issueStartDate: "",
-          images: [],
-          video: null,
-          resolution: "",
-          acknowledgeTerms: false,
-          confirmAccuracy: false
+        const formDataToSend = new FormData();
+        
+        // Add all text fields
+        Object.keys(formData).forEach(key => {
+            if (key === 'size') {
+                formDataToSend.append('size', JSON.stringify(formData.size));
+            } else if (key !== 'images' && key !== 'video' && 
+                      key !== 'acknowledgeTerms' && key !== 'confirmAccuracy') {
+                formDataToSend.append(key, formData[key] || '');
+            }
         });
-      }
+
+        // Add images with specific names
+        formData.images.forEach((image, index) => {
+            formDataToSend.append(`images`, image);
+        });
+
+        // Add video if exists
+        if (formData.video) {
+            formDataToSend.append('video', formData.video);
+        }
+
+        const response = await axios.post(
+            'http://localhost:4000/api/warranty/submit-claim',
+            formDataToSend,
+            {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }
+        );
+
+        if (response.data.success) {
+            toast.success("Warranty claim submitted successfully!");
+            generatePDF(formData);
+            // Reset form after successful submission
+            setFormData({
+                fullName: "",
+                address: "",
+                phoneNumber: "",
+                email: "",
+                brandModel: "",
+                size: [],
+                orderNumber: "",
+                purchaseDate: "",
+                proofOfPurchase: "",
+                warrantyCertNumber: "",
+                warrantyStart: "",
+                warrantyEnd: "",
+                warrantyType: "",
+                problemType: "",
+                issueStartDate: "",
+                images: [],
+                video: null,
+                resolution: "",
+                acknowledgeTerms: false,
+                confirmAccuracy: false
+            });
+        }
     } catch (error) {
-      console.error('Submission error:', error);
-      toast.error(error.response?.data?.message || "Error submitting warranty claim. Please try again.");
+        console.error('Submission error:', error);
+        toast.error(error.response?.data?.message || "Error submitting warranty claim");
     }
   };
 

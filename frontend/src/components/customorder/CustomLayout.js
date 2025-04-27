@@ -17,9 +17,6 @@ const CustomLayout = ({ children }) => {
           <Link to="/custom/clients" className="nav-link">
             <FaUsers /> Client List
           </Link>
-          <Link to="/admin/dashboard" className="nav-link return-link">
-            <FaMoneyBillWave /> Return to Admin
-          </Link>
         </nav>
       </div>
       <div className="custom-content">

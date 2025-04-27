@@ -73,8 +73,8 @@ function App() {
               <Route path="add-price" element={<AddPrice />} />
               <Route path="payment" element={<CustomPayment />} />
               <Route path="update/:id" element={<CustomUpdate />} />
-              <Route path="order-delete/:id" element={<OrderDelete />} />
-              <Route path="client-delete/:id" element={<ClientDelete />} />
+              <Route path="delete/:id" element={<OrderDelete />} /> {/* Simplified path */}
+              <Route path="client/delete/:id" element={<ClientDelete />} />
             </Routes>
           </CustomLayout>
         } />

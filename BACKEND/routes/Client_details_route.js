@@ -4,17 +4,17 @@ import Client from '../models/client_module.js';
 const router = express.Router();
 
 // Get all clients
-router.route('/').get(async (req, res) => {
+router.get('/', async (req, res) => {
     try {
-        const clients = await Client.find();
+        const clients = await Client.find().sort({ createdAt: -1 });
         res.status(200).json({
-            status: "Success",
+            success: true,
             clients: clients
         });
     } catch (err) {
         console.error('Error:', err);
-        res.status(400).json({
-            status: "Error",
+        res.status(500).json({
+            success: false,
             message: "Failed to fetch clients",
             error: err.message
         });
@@ -22,36 +22,46 @@ router.route('/').get(async (req, res) => {
 });
 
 // Add new client
-router.route('/add').post(async (req, res) => {
+router.post('/add', async (req, res) => {
     try {
-        const { _id, name, email, phone, address } = req.body;
+        const { name, email, phone, address } = req.body;
 
         // Validate required fields
-        if (!_id || !name || !email || !phone || !address) {
+        if (!name || !email || !phone || !address) {
             return res.status(400).json({
-                status: "Error",
+                success: false,
                 message: "All fields are required"
             });
         }
 
+        // Check for existing client with same email
+        const existingClient = await Client.findOne({ email });
+        if (existingClient) {
+            return res.status(400).json({
+                success: false,
+                message: "Client with this email already exists"
+            });
+        }
+
+        // Create new client
         const newClient = new Client({
-            _id,
-            name,
-            email,
-            phone: Number(phone),
-            address
+            name: name.trim(),
+            email: email.trim(),
+            phone: phone.trim(),
+            address: address.trim()
         });
 
         await newClient.save();
+
         res.status(201).json({
-            status: "Success",
+            success: true,
             message: "Client added successfully",
             client: newClient
         });
     } catch (err) {
-        console.error('Error:', err);
-        res.status(400).json({
-            status: "Error",
+        console.error('Error adding client:', err);
+        res.status(500).json({
+            success: false,
             message: "Failed to add client",
             error: err.message
         });
@@ -59,49 +69,38 @@ router.route('/add').post(async (req, res) => {
 });
 
 // Delete client
-router.route('/delete/:id').delete(async (req, res) => {
+router.delete('/delete/:id', async (req, res) => {
     try {
-        const client = await Client.findByIdAndDelete(req.params.id);
-        if (!client) {
-            return res.status(404).json({
-                status: "Error",
-                message: "Client not found"
+        console.log('Delete request received for client:', req.params.id);
+        
+        if (!req.params.id) {
+            return res.status(400).json({
+                success: false,
+                message: "Client ID is required"
             });
         }
-        res.status(200).json({
-            status: "Success",
-            message: "Client deleted successfully"
-        });
-    } catch (err) {
-        console.error('Error:', err);
-        res.status(400).json({
-            status: "Error",
-            message: "Failed to delete client",
-            error: err.message
-        });
-    }
-});
 
-// Get client by ID
-router.route('/get/:id').get(async (req, res) => {
-    try {
         const client = await Client.findById(req.params.id);
         if (!client) {
             return res.status(404).json({
-                status: "Error",
+                success: false,
                 message: "Client not found"
             });
         }
+
+        const deletedClient = await Client.findByIdAndDelete(req.params.id);
+        console.log('Client deleted:', deletedClient);
+
         res.status(200).json({
-            status: "Success",
-            client: client
+            success: true,
+            message: "Client deleted successfully",
+            client: deletedClient
         });
     } catch (err) {
-        console.error('Error:', err);
-        res.status(400).json({
-            status: "Error",
-            message: "Failed to fetch client",
-            error: err.message
+        console.error('Error deleting client:', err);
+        res.status(500).json({
+            success: false,
+            message: err.message || "Failed to delete client"
         });
     }
 });

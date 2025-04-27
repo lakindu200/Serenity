@@ -9,19 +9,19 @@ const AdminLayout = ({ children }) => {
       <div className="admin-sidebar">
         <nav className="admin-nav">
           <Link to="/admin/dashboard">
-            <FaWarehouse /> Dashboard
+             Dashboard
           </Link>
           <Link to="/admin/product">
-            <FaBox /> Products
+             Products
           </Link>
           <Link to="/admin/payments">
-            <FaFileInvoiceDollar /> Payment Management
+            Payment Management
           </Link>
           <Link to="/admin/warranty">
-            <FaShieldAlt /> Warranty Claims
+             Warranty Claims
           </Link>
           <Link to="/custom/customize" className="custom-order-link">
-            <FaTshirt /> Custom Orders
+             Custom Orders
           </Link>
         </nav>
       </div>

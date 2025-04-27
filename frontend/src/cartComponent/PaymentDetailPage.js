@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 
+const API_BASE_URL = 'http://localhost:4000';
+
 const PaymentDetailPage = () => {
   const { id } = useParams();
   const [payment, setPayment] = useState(null);
@@ -12,7 +14,7 @@ const PaymentDetailPage = () => {
     const fetchPaymentDetails = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`http://localhost:4000/api/payment/${id}`);
+        const response = await axios.get(`${API_BASE_URL}/api/payment/${id}`);
         setPayment(response.data);
         setLoading(false);
       } catch (err) {
@@ -111,16 +113,18 @@ const PaymentDetailPage = () => {
           </div>
         </div>
 
-        <div>
+        <div className="receipt-section">
           <h2 className="text-2xl font-bold mb-4">Receipt</h2>
-          <a
-            href={`http://localhost:4000${payment.receiptPath}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-500 hover:text-blue-600 underline"
-          >
-            View Receipt
-          </a>
+          {payment.receiptPath && (
+            <div className="receipt-image-container">
+              <img 
+                src={`${API_BASE_URL}${payment.receiptPath}`}
+                alt="Payment Receipt"
+                className="receipt-image"
+                onClick={() => window.open(`${API_BASE_URL}${payment.receiptPath}`, '_blank')}
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>
