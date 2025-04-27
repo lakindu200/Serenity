@@ -196,13 +196,13 @@ function CustomUpdate() {
                     </div>
                 </div>
 
-                <div className="d-grid gap-2">
+                <div className="btn-card ">
                     <button type="submit" className="btn btn-primary">
                         Update Product
                     </button>
                     <button 
                         type="button" 
-                        className="btn btn-secondary d-grid gap-2"
+                        className="btn btn-secondary"
                         onClick={() => navigate('/orders')}
                     >
                         Cancel
