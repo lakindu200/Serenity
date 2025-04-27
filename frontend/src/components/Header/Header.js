@@ -39,7 +39,7 @@ const Header = () => {
                             }
                         </button>
                         <Link to="/">
-                            <img src={assets.serenity_Logo} alt="Serenity Logo" className="serenity-logo" />
+                            <img src={assets.serenity_Logo_White} alt="Serenity Logo" className="serenity-logo" />
                         </Link>
                         <ul className={`nav-links ${isDrawerOpen ? "open" : ""}`}>
                             <li><Link to="/" onClick={toggleDrawer}>Home</Link></li>
