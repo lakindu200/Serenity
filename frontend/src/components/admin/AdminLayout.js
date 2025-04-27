@@ -17,11 +17,17 @@ const AdminLayout = ({ children }) => {
           <Link to="/admin/product" className="admin-nav-item">
             <FaBox /> Products
           </Link>
+          <Link to="/admin/product/add-product" className="admin-nav-item">
+            <FaBox /> Add Product
+          </Link>
           <Link to="/admin/payments" className="admin-nav-item">
             <FaFileInvoiceDollar /> Payments
           </Link>
           <Link to="/admin/warranty" className="admin-nav-item">
             <FaShieldAlt /> Warranty Claims
+          </Link>
+          <Link to="" className="admin-nav-item">
+            custom products
           </Link>
         </nav>
       </div>
