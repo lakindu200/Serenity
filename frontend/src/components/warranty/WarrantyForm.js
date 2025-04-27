@@ -16,8 +16,7 @@ import axios from 'axios';
 import { jsPDF } from 'jspdf';
 import "jspdf-autotable";
 import { useNavigate } from 'react-router-dom';
-import Header from '../Header/Header';
-import Footer from '../Footer/Footer';
+
 import './WarrantyForm.css';
 
 const WarrantyClaimForm = () => {
@@ -225,7 +224,7 @@ const WarrantyClaimForm = () => {
 
   return (
     <>
-      <Header />
+      
       <div className="warranty-page">
         <Container maxWidth="md" className="warranty-container">
           <motion.div 
@@ -401,7 +400,7 @@ const WarrantyClaimForm = () => {
           <ToastContainer position="top-right" autoClose={3000} />
         </Container>
       </div>
-      <Footer />
+      
     </>
   );
 };

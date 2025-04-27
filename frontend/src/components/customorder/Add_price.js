@@ -46,7 +46,8 @@ function AddPrice() {
         };
         localStorage.setItem('priceData', JSON.stringify(priceData));
 
-        navigate('/payment');
+        // Update the navigation path to match the route configuration
+        navigate('/custom/payment'); // Changed from '/payment' to '/custom/payment'
     };
 
     const handleSubmit = (e) => {

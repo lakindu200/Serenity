@@ -23,9 +23,8 @@ import connectDB from './config/db.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Initialize express app
+// Initialize express app and load environment variables
 dotenv.config();
-// Make sure dotenv is loaded before any database connection
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -79,17 +78,7 @@ app.use((err, req, res, next) => {
 
 app.use('/custom_product', customProductRoutes);
 app.use('/client_details', clientDetailsRoutes);
-app.listen(PORT, () => {
-  console.log(`Server is running on port: ${PORT}`);
-});
 
-
-
-
-
-
-
-// Start server
 const startServer = async () => {
   try {
     console.log('Environment:', process.env.NODE_ENV);

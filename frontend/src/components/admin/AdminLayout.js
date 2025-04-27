@@ -1,33 +1,27 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaBox, FaWarehouse, FaFileInvoiceDollar, FaShieldAlt } from 'react-icons/fa';
+import { FaBox, FaWarehouse, FaFileInvoiceDollar, FaShieldAlt, FaTshirt } from 'react-icons/fa';
 import './AdminLayout.css';
 
 const AdminLayout = ({ children }) => {
   return (
     <div className="admin-layout">
       <div className="admin-sidebar">
-        <div className="admin-sidebar-header">
-          <h2>Admin Panel</h2>
-        </div>
         <nav className="admin-nav">
-          <Link to="/admin/dashboard" className="admin-nav-item">
+          <Link to="/admin/dashboard">
             <FaWarehouse /> Dashboard
           </Link>
-          <Link to="/admin/product" className="admin-nav-item">
+          <Link to="/admin/product">
             <FaBox /> Products
           </Link>
-          <Link to="/admin/product/add-product" className="admin-nav-item">
-            <FaBox /> Add Product
+          <Link to="/admin/payments">
+            <FaFileInvoiceDollar /> Payment Management
           </Link>
-          <Link to="/admin/payments" className="admin-nav-item">
-            <FaFileInvoiceDollar /> Payments
-          </Link>
-          <Link to="/admin/warranty" className="admin-nav-item">
+          <Link to="/admin/warranty">
             <FaShieldAlt /> Warranty Claims
           </Link>
-          <Link to="" className="admin-nav-item">
-            custom products
+          <Link to="/custom/customize" className="custom-order-link">
+            <FaTshirt /> Custom Orders
           </Link>
         </nav>
       </div>

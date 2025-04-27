@@ -60,7 +60,7 @@ function AddClientDetail() {
         
         if (!productData) {
             alert("No product data found. Please add product first.");
-            navigate('/customize');
+            navigate('/custom/customize');
             return;
         }
 
@@ -71,8 +71,13 @@ function AddClientDetail() {
             address
         };
 
-        localStorage.setItem('tempClientData', JSON.stringify(clientData));
-        navigate('/add-price');
+        try {
+            localStorage.setItem('tempClientData', JSON.stringify(clientData));
+            navigate('/custom/add-price');
+        } catch (err) {
+            console.error('Error saving client data:', err);
+            alert('Error saving client details. Please try again.');
+        }
     };
 
     return (

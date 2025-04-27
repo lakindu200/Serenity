@@ -91,7 +91,7 @@ const ProductView = () => {
 
       <div className="flex justify-center mt-12">
         <Link
-          to="/cartview"
+          to="/cart"
           className="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition-colors duration-300 font-medium text-lg shadow-lg hover:shadow-xl"
         >
           Go to Cart

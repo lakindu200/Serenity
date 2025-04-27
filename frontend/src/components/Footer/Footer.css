@@ -1,110 +1,82 @@
 .footer {
     background-color: #1a2a44;
     color: white;
-    padding: 30px 15px;
+    padding: 3rem 1.5rem 1.5rem;
+    width: 100%;
+    margin-top: auto;
+}
+
+.footer a {
+    transition: color 0.3s ease;
+}
+
+.footer a:hover {
+    color: #F4B000;
 }
 
 .footer-content {
     max-width: 1200px;
     margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-section h3 {
+    color: #F4B000;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+}
+
+.footer-section p {
+    color: #e5e7eb;
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+}
+
+.footer-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-section ul li {
+    margin-bottom: 0.75rem;
+}
+
+.footer-section ul li a {
+    color: #e5e7eb;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-section ul li a:hover {
+    color: #F4B000;
+}
+
+.social-links {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 20px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid #3a4a64;
+    gap: 1rem;
 }
 
-.promo-section {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
+.social-links a {
+    color: #e5e7eb;
+    font-size: 1.5rem;
+    transition: color 0.3s ease;
 }
 
-.promo-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 14px;
-    line-height: 1.5;
-}
-
-.promo-icon {
-    font-size: 24px;
-}
-
-.banner-section {
-    position: relative;
-    width: 300px;
-    height: 150px;
-}
-
-.banner-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border: 2px solid #f00;
-}
-
-.banner-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    background: rgba(0, 0, 0, 0.5);
-}
-
-.banner-text {
-    color: white;
-}
-
-.banner-text h3 {
-    font-size: 18px;
-    margin-bottom: 5px;
-}
-
-.banner-text p {
-    font-size: 14px;
-    margin-bottom: 10px;
-}
-
-.follow-btn {
-    background-color: #f5c518;
-    border: none;
-    padding: 5px 15px;
-    cursor: pointer;
-    font-size: 14px;
-    border-radius: 4px;
-}
-
-.follow-btn:hover {
-    background-color: #e0b416;
-}
-
-.share-btn {
-    background-color: transparent;
-    border: 1px solid white;
-    color: white;
-    padding: 5px 15px;
-    cursor: pointer;
-    font-size: 14px;
-    border-radius: 4px;
-}
-
-.share-btn:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+.social-links a:hover {
+    color: #F4B000;
 }
 
 .footer-bottom {
     max-width: 1200px;
-    margin: 20px auto 0;
+    margin: 1.5rem auto 0;
     text-align: center;
+    color: #e5e7eb;
+    font-size: 0.875rem;
 }
 
 .social-media {
@@ -139,14 +111,6 @@
     margin-bottom: 10px;
 }
 
-.footer-logo {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
-}
-
 .serenity-logo {
     width: 50px;
     height: auto;
@@ -163,10 +127,18 @@
 }
 
 @media (max-width: 768px) {
+    .footer {
+        padding: 2rem 1rem 1rem;
+    }
+
     .footer-content {
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .footer-section h3 {
+        font-size: 1.125rem;
+        margin-bottom: 1rem;
     }
 
     .promo-section {

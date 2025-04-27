@@ -3,8 +3,6 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ProductCard from "../product/ProductCard/ProductCard";
 import ProductSkeleton from "../product/ProductCard/ProductSkeleton";
-import Header from "../../components/Header/Header";
-import Footer from "../../components/Footer/Footer";
 import "./Home.css";
 
 const API_BASE_URL = "http://localhost:4000";
@@ -105,19 +103,19 @@ function Home() {
   if (error) {
     return (
       <div className="home-container">
-        <Header />
+        
         <p>{error}</p>
         <button onClick={handleRetry} className="retry-btn">
           Retry
         </button>
-        <Footer />
+        
       </div>
     );
   }
 
   return (
     <div className="home-container">
-      <Header />
+      
 
       <section className="new-arrivals-section">
         <h1>New Arrivals</h1>
@@ -158,7 +156,7 @@ function Home() {
         ))}
       </section>
 
-      <Footer />
+      
     </div>
   );
 }

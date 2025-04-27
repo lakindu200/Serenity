@@ -3,8 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ProductCard from "../product/ProductCard/ProductCard";
 import ProductSkeleton from "../product/ProductCard/ProductSkeleton";
-import Header from "../../components/Header/Header";
-import Footer from "../../components/Footer/Footer";
+
 import "./Shop.css";
 
 const API_BASE_URL = "http://localhost:4000"; // Make sure this matches your backend port
@@ -117,17 +116,17 @@ function Shop() {
   if (error) {
     return (
       <div className="home-container">
-        <Header />
+        
         <p>{error}</p>
         <button onClick={handleRetry} className="retry-btn">Retry</button>
-        <Footer />
+        
       </div>
     );
   }
 
   return (
     <div className="home-container">
-      <Header />
+     
       <section className="shop-section">
         <h1>Shop</h1>
         <div className="shop-controls">
@@ -179,7 +178,7 @@ function Shop() {
           )}
         </div>
       </section>
-      <Footer />
+      
     </div>
   );
 }

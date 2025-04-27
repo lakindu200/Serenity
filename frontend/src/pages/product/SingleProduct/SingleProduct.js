@@ -3,8 +3,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import SingleProductSkeleton from "./SingleProductSkeleton";
 import "./SingleProduct.css";
-import Header from "../../../components/Header/Header";
-import Footer from "../../../components/Footer/Footer";
 import { assets } from "../../../assets/assets";
 
 const API_BASE_URL = "http://localhost:4000";
@@ -123,7 +121,7 @@ function SingleProduct() {
     return (
         <>
             <div className="home-container">
-                <Header />
+               
 
                 <div className="single-product-container">
 
@@ -166,7 +164,7 @@ function SingleProduct() {
                         </div>
                     </div>
                 </div>
-                <Footer />
+                
             </div >
         </>
     );

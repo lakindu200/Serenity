@@ -1,5 +1,3 @@
-
-
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -15,8 +13,6 @@ function AddCustomProduct() {
   const [pillowSize, setPillowSize] = useState('');
   const [pillowColor, setPillowColor] = useState('');
   const [pillowQuantity, setPillowQuantity] = useState('');
-  
-
   
 
   const handleSubmit = async (e) => {
@@ -41,9 +37,13 @@ function AddCustomProduct() {
         orderDate: new Date()
     };
 
-    
-    localStorage.setItem('tempProductData', JSON.stringify(newProduct));
-    navigate('/client_details');
+    try {
+        localStorage.setItem('tempProductData', JSON.stringify(newProduct));
+        navigate('/custom/client-details'); // Update path to match route configuration
+    } catch (err) {
+        console.error('Error saving product data:', err);
+        alert('Error saving product details. Please try again.');
+    }
   };
 
   return (

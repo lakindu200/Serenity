@@ -43,51 +43,54 @@ router.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Create payment route with receipt upload
 router.post('/create', upload.single('receipt'), async (req, res) => {
-    try {
-        if (!req.file) {
-            return res.status(400).json({
-                success: false,
-                message: 'Receipt image is required'
-            });
-        }
+  try {
+    const {
+      phone,
+      email,
+      address,
+      deliveryLocation,
+      subtotal,
+      deliveryFee,
+      totalCost,
+      products
+    } = req.body;
 
-        const {
-            phone, email, address, deliveryLocation,
-            subtotal, deliveryFee, totalCost, products
-        } = req.body;
-
-        const payment = new Payment({
-            phone,
-            email,
-            address,
-            deliveryLocation,
-            subtotal: Number(subtotal),
-            deliveryFee: Number(deliveryFee),
-            totalCost: Number(totalCost),
-            products: JSON.parse(products),
-            receiptPath: `/uploads/receipts/${req.file.filename}`
-        });
-
-        await payment.save();
-        
-        res.status(201).json({
-            success: true,
-            message: 'Payment recorded successfully',
-            payment
-        });
-    } catch (error) {
-        console.error('Payment creation error:', error);
-        if (req.file) {
-            fs.unlink(req.file.path, (err) => {
-                if (err) console.error('Error deleting failed upload:', err);
-            });
-        }
-        res.status(500).json({
-            success: false,
-            message: 'Error processing payment',
-            error: error.message
-        });
+    if (!req.file) {
+      return res.status(400).json({ 
+        success: false,
+        message: 'Receipt file is required' 
+      });
     }
+
+    const receiptPath = `/uploads/${req.file.filename}`;
+
+    const payment = new Payment({
+      phone,
+      email,
+      address,
+      deliveryLocation,
+      subtotal: parseFloat(subtotal),
+      deliveryFee: parseFloat(deliveryFee),
+      totalCost: parseFloat(totalCost),
+      receiptPath,
+      products: JSON.parse(products),
+    });
+
+    await payment.save();
+    
+    res.status(200).json({ 
+      success: true,
+      message: 'Order completed successfully!' 
+    });
+
+  } catch (error) {
+    console.error('Error completing order:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Error completing order',
+      error: error.message 
+    });
+  }
 });
 
 // Fetch all payments

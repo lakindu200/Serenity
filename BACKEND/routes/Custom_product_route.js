@@ -3,69 +3,12 @@ import Product from '../models/custom_product.js';
 
 const router = express.Router();
 
-// Add new product
-router.route('/add').post(async (req, res) => {
+// Get all products with populated client details
+router.get('/', async (req, res) => {
     try {
-        const {
-            length,
-            width,
-            color,
-            material,
-            pillow_type,
-            pillow_size,
-            pillow_color,
-            pillow_quantity,
-            subtotal,
-            paymentAmount,
-            balance,
-            orderDate = new Date()
-        } = req.body;
+        const products = await Product.find()
+            .sort({ orderDate: -1 }); // Sort by newest first
 
-        // Validate required fields
-        if (!length || !width || !color || !material || 
-            !pillow_type || !pillow_size || !pillow_color || 
-            !pillow_quantity || !subtotal || !paymentAmount || balance === undefined) {
-            return res.status(400).json({
-                status: "Error",
-                message: "All fields are required including payment details"
-            });
-        }
-
-        const newProduct = new Product({
-            length: Number(length),
-            width: Number(width),
-            color,
-            material,
-            pillow_type,
-            pillow_size,
-            pillow_color,
-            pillow_quantity: Number(pillow_quantity),
-            subtotal: Number(subtotal),
-            paymentAmount: Number(paymentAmount),
-            balance: Number(balance),
-            orderDate: new Date(orderDate)
-        });
-
-        const savedProduct = await newProduct.save();
-        res.status(201).json({
-            status: "Success",
-            message: "Product added successfully",
-            product: savedProduct
-        });
-    } catch (err) {
-        console.error('Error:', err);
-        res.status(400).json({
-            status: "Error",
-            message: "Failed to add product",
-            error: err.message
-        });
-    }
-});
-
-// Get all products
-router.route('/').get(async (req, res) => {
-    try {
-        const products = await Product.find();
         res.status(200).json({
             status: "Success",
             products: products
@@ -80,8 +23,8 @@ router.route('/').get(async (req, res) => {
     }
 });
 
-// Update product
-router.route('/update/:id').put(async (req, res) => {
+// Add new custom order
+router.post('/add', async (req, res) => {
     try {
         const {
             length,
@@ -92,10 +35,29 @@ router.route('/update/:id').put(async (req, res) => {
             pillow_size,
             pillow_color,
             pillow_quantity,
-            subtotal
+            clientName,
+            clientEmail,
+            clientPhone,
+            clientAddress,
+            subtotal,
+            paymentAmount,
+            balance,
+            orderDate = new Date()
         } = req.body;
 
-        const updateProduct = {
+        // Validate required fields
+        if (!length || !width || !color || !material || 
+            !pillow_type || !pillow_size || !pillow_color || 
+            !pillow_quantity || !clientName || !clientEmail ||
+            !clientPhone || !clientAddress || !subtotal || 
+            !paymentAmount || balance === undefined) {
+            return res.status(400).json({
+                status: "Error",
+                message: "All fields are required"
+            });
+        }
+
+        const newProduct = new Product({
             length: Number(length),
             width: Number(width),
             color,
@@ -104,72 +66,42 @@ router.route('/update/:id').put(async (req, res) => {
             pillow_size,
             pillow_color,
             pillow_quantity: Number(pillow_quantity),
-            subtotal: Number(subtotal)
-        };
-
-        const updatedProduct = await Product.findByIdAndUpdate(
-            req.params.id, 
-            updateProduct,
-            { new: true }
-        );
-
-        if (!updatedProduct) {
-            return res.status(404).json({
-                status: "Error",
-                message: "Product not found"
-            });
-        }
-
-        res.status(200).json({
-            status: "Success",
-            message: "Product updated successfully",
-            product: updatedProduct
+            clientName,
+            clientEmail,
+            clientPhone,
+            clientAddress,
+            subtotal: Number(subtotal),
+            paymentAmount: Number(paymentAmount),
+            balance: Number(balance),
+            orderDate: new Date(orderDate)
         });
-    } catch (err) {
-        console.error('Error:', err);
-        res.status(400).json({
-            status: "Error",
-            message: "Failed to update product",
-            error: err.message
-        });
-    }
-});
 
-// Delete product
-router.route('/delete/:id').delete(async (req, res) => {
-    try {
-        const deletedProduct = await Product.findByIdAndDelete(req.params.id);
+        const savedProduct = await newProduct.save();
         
-        if (!deletedProduct) {
-            return res.status(404).json({
-                status: "Error",
-                message: "Product not found"
-            });
-        }
-
-        res.status(200).json({
+        res.status(201).json({
             status: "Success",
-            message: "Product deleted successfully"
+            message: "Order placed successfully",
+            product: savedProduct
         });
     } catch (err) {
         console.error('Error:', err);
         res.status(400).json({
             status: "Error",
-            message: "Failed to delete product",
+            message: "Failed to place order",
             error: err.message
         });
     }
 });
 
-// Get product by ID
-router.route('/get/:id').get(async (req, res) => {
+// Get single order by ID
+router.get('/get/:id', async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
         
         if (!product) {
             return res.status(404).json({
                 status: "Error",
-                message: "Product not found"
+                message: "Order not found"
             });
         }
 
@@ -181,7 +113,7 @@ router.route('/get/:id').get(async (req, res) => {
         console.error('Error:', err);
         res.status(400).json({
             status: "Error",
-            message: "Failed to fetch product",
+            message: "Failed to fetch order",
             error: err.message
         });
     }

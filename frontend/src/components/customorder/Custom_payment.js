@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Custom_payment.css';
 
-
 function CustomPayment() {
     const navigate = useNavigate();
     const [priceData, setPriceData] = useState(null);
@@ -21,8 +20,8 @@ function CustomPayment() {
         const clientInfo = JSON.parse(localStorage.getItem('tempClientData'));
 
         if (!savedPrices || !productData || !clientInfo) {
-            alert("Missing order, price, or client details");
-            navigate('/add-price');
+            alert("Missing required details. Please start over.");
+            navigate('/custom/customize');
             return;
         }
 
@@ -30,6 +29,77 @@ function CustomPayment() {
         setOrderData(productData);
         setClientData(clientInfo);
     }, [navigate]);
+
+    const handleSubmitOrder = async () => {
+        if (!paymentAmount) {
+            setError('Please enter payment amount');
+            return;
+        }
+
+        const paid = parseFloat(paymentAmount);
+        const total = priceData?.subTotal || 0;
+
+        if (paid < total) {
+            setError('Payment amount must be at least equal to the total amount');
+            return;
+        }
+
+        setLoading(true);
+        try {
+            // Create combined order payload
+            const orderPayload = {
+                // Product details
+                length: orderData.length,
+                width: orderData.width,
+                color: orderData.color,
+                material: orderData.material,
+                pillow_type: orderData.pillow_type,
+                pillow_size: orderData.pillow_size,
+                pillow_color: orderData.pillow_color,
+                pillow_quantity: orderData.pillow_quantity,
+                // Client details
+                clientName: clientData.name,
+                clientEmail: clientData.email,
+                clientPhone: clientData.phone,
+                clientAddress: clientData.address,
+                // Payment details
+                subtotal: priceData.subTotal,
+                paymentAmount: paid,
+                balance: calculateBalance(paymentAmount),
+                orderDate: new Date(),
+                status: 'pending'
+            };
+
+            // Save order
+            const response = await fetch('http://localhost:8000/custom_product/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(orderPayload)
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to place order');
+            }
+
+            const result = await response.json();
+
+            // Clear localStorage
+            localStorage.removeItem('tempProductData');
+            localStorage.removeItem('tempClientData');
+            localStorage.removeItem('priceData');
+
+            alert('Order placed successfully!');
+            navigate('/custom/orders');
+
+        } catch (err) {
+            console.error('Error:', err);
+            setError(err.message || 'Failed to place order');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const calculateBalance = (amount) => {
         const paid = parseFloat(amount) || 0;
@@ -43,7 +113,6 @@ function CustomPayment() {
         const newBalance = calculateBalance(amount);
         setBalance(newBalance);
         
-        // Validate payment amount
         const paid = parseFloat(amount) || 0;
         const total = priceData?.subTotal || 0;
         
@@ -54,81 +123,16 @@ function CustomPayment() {
         }
     };
 
-    const handleSubmitOrder = async () => {
-        if (!paymentAmount) {
-            setError('Please enter payment amount');
-            return;
-        }
-
-        const paid = parseFloat(paymentAmount) || 0;
-        const total = priceData?.subTotal || 0;
-        
-        if (paid < total) {
-            setError('Payment amount must be at least equal to the total amount');
-            return;
-        }
-
-        setLoading(true);
-        try {
-            const productPayload = {
-                ...orderData,
-                orderDate: new Date(),
-                subtotal: priceData.subTotal,
-                paymentAmount: parseFloat(paymentAmount),
-                balance: balance
-            };
-
-            const productResponse = await fetch('http://localhost:8000/custom_product/add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(productPayload)
-            });
-
-            if (!productResponse.ok) {
-                throw new Error('Failed to save product');
-            }
-
-            const productResult = await productResponse.json();
-            
-            if (!productResult.product || !productResult.product._id) {
-                throw new Error('Invalid product response');
-            }
-
-            
-            const clientResponse = await fetch('http://localhost:8000/client_details/add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    _id: productResult.product._id,
-                    ...clientData
-                })
-            });
-
-            if (!clientResponse.ok) {
-                throw new Error('Failed to save client details');
-            }
-
-            // Clear localStorage
-            localStorage.removeItem('tempProductData');
-            localStorage.removeItem('tempClientData');
-            localStorage.removeItem('priceData');
-
-            alert('Order placed successfully!');
-            navigate('/');
-        } catch (err) {
-            console.error('Error:', err);
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    };
-
     return (
         <div className="container mt-5">
+            {error && (
+                <div className="alert alert-danger">
+                    <i className="bi bi-exclamation-circle me-2"></i>
+                    {error}
+                </div>
+            )}
+            
+            {/* Order Summary Card */}
             <div className="card mb-4">
                 <div className="card-header bg-primary text-white">
                     <h3 className="mb-0">Order Calculation</h3>
@@ -164,7 +168,7 @@ function CustomPayment() {
                 </div>
             </div>
 
-            {/* Payment Input Section */}
+            {/* Payment Input Card */}
             <div className="card mb-4">
                 <div className="card-header bg-primary text-white">
                     <h3 className="mb-0">Payment Details</h3>
@@ -222,42 +226,30 @@ function CustomPayment() {
             </div>
 
             {/* Action Buttons */}
-            <div className="card">
-                <div className="card-body">
-                    <div className="d-flex justify-content-between">
-                        <button 
-                            className="btn btn-secondary"
-                            onClick={() => navigate('/add-price')}
-                            disabled={loading}
-                        >
-                            <i className="bi bi-arrow-left me-2"></i>
-                            Back to Pricing
-                        </button>
-                        <button 
-                            className="btn btn-primary"
-                            onClick={handleSubmitOrder}
-                            disabled={loading || !paymentAmount}
-                        >
-                            {loading ? (
-                                <>
-                                    <span className="spinner-border spinner-border-sm me-2"></span>
-                                    Placing Order...
-                                </>
-                            ) : (
-                                <>
-                                    Place Order
-                                    <i className="bi bi-check2-circle ms-2"></i>
-                                </>
-                            )}
-                        </button>
-                    </div>
-                    {error && (
-                        <div className="alert alert-danger mt-3">
-                            <i className="bi bi-exclamation-circle me-2"></i>
-                            {error}
-                        </div>
+            <div className="btn-card">
+                <button 
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => navigate('/custom/add-price')}
+                    disabled={loading}
+                >
+                    <i className="bi bi-arrow-left"></i> Back
+                </button>
+                <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={handleSubmitOrder}
+                    disabled={loading || !paymentAmount || paymentError}
+                >
+                    {loading ? (
+                        <>
+                            <span className="spinner-border spinner-border-sm"></span>
+                            Processing...
+                        </>
+                    ) : (
+                        <>Place Order <i className="bi bi-check2-circle"></i></>
                     )}
-                </div>
+                </button>
             </div>
         </div>
     );
