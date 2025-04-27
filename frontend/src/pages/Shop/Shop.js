@@ -7,7 +7,7 @@ import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import "./Shop.css";
 
-const API_BASE_URL = "http://localhost:4000";
+const API_BASE_URL = "http://localhost:4000"; // Make sure this matches your backend port
 
 function Shop() {
   const [products, setProducts] = useState([]);
@@ -26,16 +26,23 @@ function Shop() {
       try {
         setLoading(true);
         setError(null);
+        
+        console.log('Fetching from:', `${API_BASE_URL}/api/product/filtered`);
+        const response = await axios.get(`${API_BASE_URL}/api/product/filtered`, {
+          params: {
+            product_type: filters.product_type,
+            Category: filters.Category,
+            size: filters.size,
+            sort: sortOption !== "default" ? sortOption : undefined
+          },
+          timeout: 5000
+        });
 
-        const queryParams = new URLSearchParams();
-        if (filters.product_type) queryParams.append("product_type", filters.product_type);
-        if (filters.Category) queryParams.append("Category", filters.Category);
-        if (filters.size) queryParams.append("size", filters.size);
-        if (sortOption !== "default") queryParams.append("sort", sortOption);
+        if (!response.data) {
+          throw new Error('No data received from server');
+        }
 
-        const response = await axios.get(`${API_BASE_URL}/api/product/filtered?${queryParams.toString()}`);
-
-        const productsData = response.data.map((product) => ({
+        const productsData = response.data.map(product => ({
           ...product,
           id: product._id,
           name: product.Product_name,
@@ -48,7 +55,8 @@ function Shop() {
         setProducts(productsData);
         setLoading(false);
       } catch (err) {
-        setError("Failed to load products. Please try again.");
+        console.error('Error fetching products:', err);
+        setError(err.response?.data?.message || err.message || "Failed to load products");
         setLoading(false);
       }
     };
@@ -70,15 +78,22 @@ function Shop() {
     setError(null);
     const fetchProducts = async () => {
       try {
-        const queryParams = new URLSearchParams();
-        if (filters.product_type) queryParams.append("product_type", filters.product_type);
-        if (filters.Category) queryParams.append("Category", filters.Category);
-        if (filters.size) queryParams.append("size", filters.size);
-        if (sortOption !== "default") queryParams.append("sort", sortOption);
+        console.log('Fetching from:', `${API_BASE_URL}/api/product/filtered`);
+        const response = await axios.get(`${API_BASE_URL}/api/product/filtered`, {
+          params: {
+            product_type: filters.product_type,
+            Category: filters.Category,
+            size: filters.size,
+            sort: sortOption !== "default" ? sortOption : undefined
+          },
+          timeout: 5000
+        });
 
-        const response = await axios.get(`${API_BASE_URL}/api/product/filtered?${queryParams.toString()}`);
+        if (!response.data) {
+          throw new Error('No data received from server');
+        }
 
-        const productsData = response.data.map((product) => ({
+        const productsData = response.data.map(product => ({
           ...product,
           id: product._id,
           name: product.Product_name,
@@ -91,7 +106,8 @@ function Shop() {
         setProducts(productsData);
         setLoading(false);
       } catch (err) {
-        setError("Failed to load products. Please try again.");
+        console.error('Error fetching products:', err);
+        setError(err.response?.data?.message || err.message || "Failed to load products");
         setLoading(false);
       }
     };

@@ -2,23 +2,39 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import multer from 'multer';
+import fs from 'fs';
 import Payment from '../models/paymentmodel.js';
 import Cart from '../models/cartmodel.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Create receipts upload directory if it doesn't exist
+const receiptsDir = path.join(__dirname, '../uploads/receipts');
+if (!fs.existsSync(receiptsDir)) {
+    fs.mkdirSync(receiptsDir, { recursive: true });
+}
+
 // Configure multer for receipt upload
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'uploads/receipts');
+        cb(null, receiptsDir);
     },
     filename: (req, file, cb) => {
         cb(null, Date.now() + path.extname(file.originalname));
     }
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ 
+    storage,
+    fileFilter: (req, file, cb) => {
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+        if (!allowedTypes.includes(file.mimetype)) {
+            return cb(new Error('Only .jpeg, .jpg and .png format allowed!'), false);
+        }
+        cb(null, true);
+    }
+});
 
 const router = express.Router();
 
@@ -28,12 +44,19 @@ router.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 // Create payment route with receipt upload
 router.post('/create', upload.single('receipt'), async (req, res) => {
     try {
+        if (!req.file) {
+            return res.status(400).json({
+                success: false,
+                message: 'Receipt image is required'
+            });
+        }
+
         const {
             phone, email, address, deliveryLocation,
             subtotal, deliveryFee, totalCost, products
         } = req.body;
 
-        const newPayment = new Payment({
+        const payment = new Payment({
             phone,
             email,
             address,
@@ -42,22 +65,26 @@ router.post('/create', upload.single('receipt'), async (req, res) => {
             deliveryFee: Number(deliveryFee),
             totalCost: Number(totalCost),
             products: JSON.parse(products),
-            receiptImage: req.file ? req.file.path : null,
-            status: 'Pending'
+            receiptPath: `/uploads/receipts/${req.file.filename}`
         });
 
-        await newPayment.save();
-
+        await payment.save();
+        
         res.status(201).json({
             success: true,
-            message: 'Payment created successfully',
-            payment: newPayment
+            message: 'Payment recorded successfully',
+            payment
         });
     } catch (error) {
         console.error('Payment creation error:', error);
+        if (req.file) {
+            fs.unlink(req.file.path, (err) => {
+                if (err) console.error('Error deleting failed upload:', err);
+            });
+        }
         res.status(500).json({
             success: false,
-            message: 'Error creating payment',
+            message: 'Error processing payment',
             error: error.message
         });
     }
@@ -79,12 +106,19 @@ router.get('/:id', async (req, res) => {
     try {
         const payment = await Payment.findById(req.params.id);
         if (!payment) {
-            return res.status(404).json({ message: 'Payment not found' });
+            return res.status(404).json({ 
+                success: false,
+                message: 'Payment not found' 
+            });
         }
         res.status(200).json(payment);
     } catch (error) {
-        console.error('Error fetching payment details:', error.message);
-        res.status(500).json({ message: 'Error fetching payment details', error: error.message });
+        console.error('Error fetching payment details:', error);
+        res.status(500).json({ 
+            success: false,
+            message: 'Error fetching payment details',
+            error: error.message 
+        });
     }
 });
 

@@ -38,36 +38,40 @@ const WarrantyClaims = () => {
 
   const fetchClaims = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/warranty/admin/claims");
+      console.log('Fetching warranty claims...'); // Add logging
+      const response = await axios.get("http://localhost:4000/api/warranty/admin/claims");
+      console.log('Claims response:', response.data); // Add logging
       setClaims(response.data);
       setFilteredClaims(response.data);
     } catch (error) {
       console.error("Error fetching claims:", error);
-      toast.error("Error loading warranty claims");
+      toast.error("Error loading warranty claims: " + error.message);
     }
   };
 
   // Handle Delete Claim
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:8000/api/warranty/admin/claims/${id}`);
+      await axios.delete(`http://localhost:4000/api/warranty/admin/claims/${id}`);
       fetchClaims();
       toast.success("Claim deleted successfully");
     } catch (error) {
       console.error("Error deleting claim:", error);
-      toast.error("Error deleting claim");
+      toast.error("Error deleting claim: " + error.message);
     }
   };
 
   // Handle Change Status
   const handleStatusChange = async (id, newStatus) => {
     try {
-      await axios.put(`http://localhost:8000/api/warranty/update-status/${id}`, { status: newStatus });
+      await axios.put(`http://localhost:4000/api/warranty/update-status/${id}`, {
+        status: newStatus
+      });
       fetchClaims();
       toast.success("Status updated successfully");
     } catch (error) {
       console.error("Error updating status:", error);
-      toast.error("Error updating claim status");
+      toast.error("Error updating claim status: " + error.message);
     }
   };
 

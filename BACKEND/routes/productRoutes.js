@@ -53,4 +53,21 @@ productRoutes.get("/", getAllProducts);
 productRoutes.put("/deactivate/:id", deactivateProduct);
 productRoutes.put("/activate/:id", activateProduct);
 
+const router = express.Router();
+
+router.get('/', async (req, res) => {
+    try {
+        console.log('Fetching products...');
+        const products = await Product.find({});
+        console.log(`Found ${products.length} products`);
+        res.json(products);
+    } catch (error) {
+        console.error('Error fetching products:', error);
+        res.status(500).json({
+            message: 'Error fetching products',
+            error: error.message
+        });
+    }
+});
+
 export default productRoutes;

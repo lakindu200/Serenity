@@ -112,4 +112,21 @@ router.post('/submit-claim', upload.fields([
   }
 });
 
+// Add this route to get all warranty claims
+router.get('/admin/claims', async (req, res) => {
+  try {
+    const claims = await WarrantyClaim.find({})
+      .sort({ createdAt: -1 }); // Sort by newest first
+    console.log('Claims fetched:', claims.length); // Add logging
+    res.json(claims);
+  } catch (error) {
+    console.error('Error fetching warranty claims:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching warranty claims',
+      error: error.message
+    });
+  }
+});
+
 export default router;

@@ -11,12 +11,13 @@ const PaymentDetailPage = () => {
   useEffect(() => {
     const fetchPaymentDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:8020/checkout/${id}`);
+        setLoading(true);
+        const response = await axios.get(`http://localhost:4000/api/payment/${id}`);
         setPayment(response.data);
+        setLoading(false);
       } catch (err) {
-        setError('Error fetching payment details');
-        console.error(err);
-      } finally {
+        console.error('Error fetching payment details:', err);
+        setError('Error fetching payment details: ' + err.message);
         setLoading(false);
       }
     };
@@ -26,24 +27,30 @@ const PaymentDetailPage = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500">
-        <p className="text-white text-lg">Loading...</p>
+      <div className="min-h-screen bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 p-6 flex items-center justify-center">
+        <div className="bg-white p-6 rounded-lg shadow-lg">
+          <p className="text-lg">Loading payment details...</p>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500">
-        <p className="text-white text-lg">{error}</p>
+      <div className="min-h-screen bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 p-6 flex items-center justify-center">
+        <div className="bg-white p-6 rounded-lg shadow-lg">
+          <p className="text-lg text-red-600">{error}</p>
+        </div>
       </div>
     );
   }
 
   if (!payment) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500">
-        <p className="text-white text-lg">No payment details found.</p>
+      <div className="min-h-screen bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 p-6 flex items-center justify-center">
+        <div className="bg-white p-6 rounded-lg shadow-lg">
+          <p className="text-lg">No payment details found.</p>
+        </div>
       </div>
     );
   }
@@ -107,7 +114,7 @@ const PaymentDetailPage = () => {
         <div>
           <h2 className="text-2xl font-bold mb-4">Receipt</h2>
           <a
-            href={`http://localhost:8020/uploads/${payment.receiptPath}`}
+            href={`http://localhost:4000${payment.receiptPath}`}
             target="_blank"
             rel="noopener noreferrer"
             className="text-blue-500 hover:text-blue-600 underline"
