@@ -59,7 +59,7 @@ const PaymentDetails = () => {
     };
 
     const handleView = (id) => {
-        navigate(`/payment/${id}`);
+        navigate(`/payment/details/${id}`);
     };
 
     const generateReport = () => {
@@ -186,7 +186,11 @@ const PaymentDetails = () => {
                                 </td>
                                 <td>
                                     <div className="action-buttons">
-                                        <button onClick={() => handleView(payment._id)} className="btn btn-view">
+                                        <button 
+                                            onClick={() => handleView(payment._id)} 
+                                            className="btn btn-view"
+                                            title="View Details"
+                                        >
                                             <FaEye />
                                         </button>
                                         <button 

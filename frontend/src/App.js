@@ -97,6 +97,9 @@ function App() {
           <Route path="terms-and-conditions" element={<TermsAndConditions />} />
           <Route path="warranty-claims" element={<WarrantyClaims />} />
           
+          {/* Payment Details Route */}
+          <Route path="/payment/details/:id" element={<PaymentDetailPage />} />
+          
           <Route path="*" element={<h1>Not Found</h1>} />
         </Route>
       </Routes>

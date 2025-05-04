@@ -142,4 +142,54 @@ router.get('/admin/claims', async (req, res) => {
   }
 });
 
+// Add this route for deleting warranty claims
+router.delete('/admin/claims/:id', async (req, res) => {
+  try {
+    const claim = await WarrantyClaim.findById(req.params.id);
+    
+    if (!claim) {
+      return res.status(404).json({
+        success: false,
+        message: 'Warranty claim not found'
+      });
+    }
+
+    // Delete associated files with proper path resolution
+    if (claim.images && claim.images.length > 0) {
+      claim.images.forEach(imagePath => {
+        const fullPath = path.join(__dirname, '..', imagePath);
+        fs.unlink(fullPath, err => {
+          if (err && err.code !== 'ENOENT') {
+            console.error('Error deleting image:', err);
+          }
+        });
+      });
+    }
+
+    if (claim.video) {
+      const fullPath = path.join(__dirname, '..', claim.video);
+      fs.unlink(fullPath, err => {
+        if (err && err.code !== 'ENOENT') {
+          console.error('Error deleting video:', err);
+        }
+      });
+    }
+
+    // Delete the claim from database
+    await WarrantyClaim.findByIdAndDelete(req.params.id);
+
+    res.status(200).json({
+      success: true,
+      message: 'Warranty claim deleted successfully'
+    });
+  } catch (error) {
+    console.error('Error deleting warranty claim:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error deleting warranty claim',
+      error: error.message
+    });
+  }
+});
+
 export default router;

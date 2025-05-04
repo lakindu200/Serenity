@@ -100,7 +100,8 @@
 
 .action-buttons {
     display: flex;
-    gap: 0.5rem;
+    gap: 8px;
+    justify-content: flex-start;
 }
 
 .btn {
@@ -118,12 +119,26 @@
 }
 
 .btn-view {
-    background-color: #2563eb;
+    background-color: #2D168C;
     color: white;
+    padding: 8px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .btn-view:hover {
-    background-color: #1d4ed8;
+    background-color: #F4B000;
+    transform: translateY(-2px);
+}
+
+.btn-view svg {
+    width: 16px;
+    height: 16px;
 }
 
 .btn-status {

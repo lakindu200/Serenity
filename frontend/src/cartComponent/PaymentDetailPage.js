@@ -113,19 +113,7 @@ const PaymentDetailPage = () => {
           </div>
         </div>
 
-        <div className="receipt-section">
-          <h2 className="text-2xl font-bold mb-4">Receipt</h2>
-          {payment.receiptPath && (
-            <div className="receipt-image-container">
-              <img 
-                src={`${API_BASE_URL}${payment.receiptPath}`}
-                alt="Payment Receipt"
-                className="receipt-image"
-                onClick={() => window.open(`${API_BASE_URL}${payment.receiptPath}`, '_blank')}
-              />
-            </div>
-          )}
-        </div>
+        
       </div>
     </div>
   );

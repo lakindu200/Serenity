@@ -51,13 +51,24 @@ const WarrantyClaims = () => {
 
   // Handle Delete Claim
   const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this warranty claim?')) {
+      return;
+    }
+
     try {
-      await axios.delete(`http://localhost:4000/api/warranty/admin/claims/${id}`);
-      fetchClaims();
-      toast.success("Claim deleted successfully");
+      const response = await axios.delete(`http://localhost:4000/api/warranty/admin/claims/${id}`);
+      
+      if (response.data.success) {
+        // Remove the deleted claim from both states
+        setClaims(prevClaims => prevClaims.filter(claim => claim._id !== id));
+        setFilteredClaims(prevFiltered => prevFiltered.filter(claim => claim._id !== id));
+        toast.success("Warranty claim deleted successfully");
+      } else {
+        throw new Error(response.data.message || 'Failed to delete warranty claim');
+      }
     } catch (error) {
       console.error("Error deleting claim:", error);
-      toast.error("Error deleting claim: " + error.message);
+      toast.error(error.response?.data?.message || "Error deleting warranty claim");
     }
   };
 
